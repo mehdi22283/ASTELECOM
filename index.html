@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASTELECOM — Nömrə Satışı</title>
+<style>
+:root{
+  --bg:#f5f7fb;--card:#fff;--text:#111827;--muted:#6b7280;
+  --primary:#635bff;--border:#e5e7eb;--shadow:0 12px 35px rgba(15,23,42,.08);
+  --green:#16a34a;--red:#ef4444;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+button,input,select{font:inherit}
+header{background:linear-gradient(135deg,#111827,#312e81 55%,#635bff);color:white;padding:22px 16px 70px}
+.nav{max-width:1150px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{font-size:24px;font-weight:900;letter-spacing:-.8px}
+.logo span{color:#a5b4fc}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-mark{width:38px;height:38px;display:inline-flex;filter:drop-shadow(0 5px 10px rgba(0,0,0,.18))}
+.brand-mark svg{width:100%;height:100%}
+.brand-word{color:#fff;font-size:23px;font-weight:950;letter-spacing:1.2px}
+
+.admin-btn{border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.12);color:#fff;padding:10px 14px;border-radius:12px;cursor:pointer}
+.hero{max-width:1150px;margin:48px auto 0}
+.hero h1{font-size:clamp(30px,6vw,54px);line-height:1.05;margin:0 0 14px;max-width:760px}
+.hero p{margin:0;color:#dbeafe;font-size:17px}
+.container{max-width:1150px;margin:-38px auto 50px;padding:0 16px}
+.searchbox{background:var(--card);border-radius:20px;padding:16px;box-shadow:var(--shadow);display:grid;grid-template-columns:1.6fr .8fr .8fr auto;gap:10px}
+input,select{width:100%;border:1px solid var(--border);background:#fff;color:var(--text);padding:13px 14px;border-radius:12px;outline:none}
+input:focus,select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(99,91,255,.1)}
+.primary{border:0;background:var(--primary);color:#fff;padding:13px 18px;border-radius:12px;font-weight:700;cursor:pointer}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+.stat{background:#fff;border:1px solid var(--border);padding:10px 14px;border-radius:12px;color:var(--muted);font-size:14px}
+.stat b{color:var(--text)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+.card{background:#fff;border:1px solid var(--border);border-radius:18px;padding:18px;box-shadow:0 5px 20px rgba(15,23,42,.04);position:relative}
+.badges{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.operator{font-weight:800;font-size:13px;padding:7px 10px;border-radius:999px;background:#f3f4f6}
+.vip{background:#fff7ed;color:#c2410c;padding:6px 9px;border-radius:999px;font-size:12px;font-weight:800}
+.number{font-size:25px;font-weight:900;letter-spacing:1px;margin:10px 0}
+.price{font-size:23px;font-weight:900;margin:12px 0}
+.price small{font-size:13px;color:var(--muted);font-weight:500}
+.card-actions{display:flex;gap:8px}
+.card-actions button{flex:1;border:0;border-radius:10px;padding:10px;cursor:pointer;font-weight:700}
+.copy{background:#eef2ff;color:#4338ca}.contact{background:#ecfdf5;color:#15803d}
+.empty{text-align:center;background:#fff;border:1px dashed #cbd5e1;border-radius:18px;padding:45px;color:var(--muted);grid-column:1/-1}
+footer{text-align:center;color:var(--muted);padding:20px}
+.modal{position:fixed;inset:0;background:rgba(15,23,42,.55);display:none;align-items:center;justify-content:center;padding:15px;z-index:10}
+.modal.show{display:flex}
+.panel{background:#fff;border-radius:20px;width:min(650px,100%);max-height:90vh;overflow:auto;padding:20px}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.close{border:0;background:#f3f4f6;border-radius:10px;padding:8px 12px;cursor:pointer}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form .full{grid-column:1/-1}
+.check{display:flex;gap:8px;align-items:center;padding:5px 0}
+.check input{width:auto}
+.list{margin-top:20px;display:grid;gap:8px}
+.row{border:1px solid var(--border);border-radius:12px;padding:10px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.row button{border:0;background:#fee2e2;color:#b91c1c;border-radius:9px;padding:8px 10px;cursor:pointer}
+.notice{background:#f8fafc;border:1px solid var(--border);border-radius:12px;padding:10px;color:var(--muted);font-size:13px;margin-top:10px}
+@media(max-width:800px){.searchbox{grid-template-columns:1fr 1fr}.searchbox .search{grid-column:1/-1}.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.grid{grid-template-columns:1fr}.form{grid-template-columns:1fr}.form .full{grid-column:auto}.searchbox{grid-template-columns:1fr}.hero{margin-top:35px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="nav">
+    <div class="logo brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 48 48" role="img">
+          <defs><linearGradient id="ag" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#c7d2fe"/></linearGradient></defs>
+          <path d="M24 3L43 11v12c0 11-7.2 18.7-19 22C12.2 41.7 5 34 5 23V11L24 3z" fill="url(#ag)" opacity=".98"/>
+          <path d="M14 31L23.7 13h2.4L36 31h-6l-2-4.1h-8L18 31h-4zm8-8h4l-2-4.2L22 23z" fill="#312e81"/>
+        </svg>
+      </span>
+      <span class="brand-word">ASTELECOM</span>
+    </div>
+    <button class="admin-btn" onclick="openAdmin()">⚙️ İdarəetmə</button>
+  </div>
+  <div class="hero">
+    <h1>Özünə uyğun gözəl nömrəni tap.</h1>
+    <p>Azercell, Bakcell və Nar nömrələrini axtar, filtrlə və əlaqə saxla.</p>
+  </div>
+</header>
+
+<main class="container">
+  <div class="searchbox">
+    <input class="search" id="search" placeholder="🔎 Nömrə axtar... məsələn 050 777">
+    <select id="operator"><option value="">Bütün operatorlar</option><option>Azercell</option><option>Bakcell</option><option>Nar</option></select>
+    <select id="prefix"><option value="">Bütün prefixlər</option></select>
+    <button class="primary" onclick="render()">Axtar</button>
+  </div>
+
+  <div class="stats">
+    <div class="stat">Nömrələr: <b id="count">0</b></div>
+    <div class="stat">VIP: <b id="vipCount">0</b></div>
+    <div class="stat">Operator: <b>3</b></div>
+  </div>
+  <div id="grid" class="grid"></div>
+</main>
+<footer>ASTELECOM © 2026 · Nömrə satış platforması</footer>
+
+<div class="modal" id="modal">
+ <div class="panel">
+  <div class="panel-head"><h2>⚙️ Nömrələrin idarəsi</h2><button class="close" onclick="closeAdmin()">✕</button></div>
+  <div class="form">
+    <input id="num" class="full" placeholder="Nömrə: 050 777 77 77">
+    <select id="op">
+      <option>Azercell</option><option>Bakcell</option><option>Nar</option>
+    </select>
+    <select id="pre"></select>
+    <input id="price" type="number" min="0" placeholder="Qiymət (AZN)">
+    <label class="check full"><input id="isVip" type="checkbox"> ⭐ VIP nömrə</label>
+    <input id="phone" class="full" placeholder="Əlaqə / WhatsApp nömrəsi (məs. 994501234567)">
+    <button class="primary full" onclick="addNumber()">＋ Nömrə əlavə et</button>
+  </div>
+  <div class="notice">Məlumatlar bu brauzerin yaddaşında saxlanılır. Saytı başqa cihazda açdıqda ayrıca məlumat bazası olacaq.</div>
+  <div id="adminList" class="list"></div>
+ </div>
+</div>
+
+<script>
+const PREFIXES={
+  Azercell:["010","050","051"],
+  Bakcell:["055","099"],
+  Nar:["070","077"]
+};
+const seed=[
+ {id:1,num:"050 777 77 77",op:"Azercell",pre:"050",price:250,isVip:true,phone:""},
+ {id:2,num:"055 555 55 55",op:"Bakcell",pre:"055",price:180,isVip:true,phone:""},
+ {id:3,num:"070 700 70 70",op:"Nar",pre:"070",price:120,isVip:true,phone:""},
+ {id:4,num:"051 234 56 78",op:"Azercell",pre:"051",price:45,isVip:false,phone:""}
+];
+let nums=JSON.parse(localStorage.getItem("nomretap_numbers")||"null")||seed;
+
+function save(){localStorage.setItem("nomretap_numbers",JSON.stringify(nums))}
+function fillPrefixes(){
+ const filters=document.getElementById("prefix"), form=document.getElementById("pre");
+ filters.innerHTML='<option value="">Bütün prefixlər</option>';
+ form.innerHTML='';
+ Object.values(PREFIXES).flat().forEach(p=>{filters.innerHTML+=`<option>${p}</option>`;form.innerHTML+=`<option>${p}</option>`});
+}
+function syncFormPrefixes(){
+ const op=document.getElementById("op").value, pre=document.getElementById("pre");
+ pre.innerHTML=PREFIXES[op].map(x=>`<option>${x}</option>`).join("");
+}
+document.getElementById("op").addEventListener("change",syncFormPrefixes);
+document.getElementById("operator").addEventListener("change",()=>{
+ const op=document.getElementById("operator").value,p=document.getElementById("prefix");
+ p.innerHTML='<option value="">Bütün prefixlər</option>';
+ const list=op?PREFIXES[op]:Object.values(PREFIXES).flat();
+ list.forEach(x=>p.innerHTML+=`<option>${x}</option>`);
+ render();
+});
+document.getElementById("search").addEventListener("input",render);
+document.getElementById("prefix").addEventListener("change",render);
+
+function render(){
+ const q=document.getElementById("search").value.replace(/\D/g,"");
+ const op=document.getElementById("operator").value,p=document.getElementById("prefix").value;
+ const data=nums.filter(n=>(!q||n.num.replace(/\D/g,"").includes(q))&&(!op||n.op===op)&&(!p||n.pre===p));
+ document.getElementById("count").textContent=data.length;
+ document.getElementById("vipCount").textContent=nums.filter(n=>n.isVip).length;
+ const grid=document.getElementById("grid");
+ grid.innerHTML=data.length?data.map(n=>`
+ <article class="card">
+  <div class="badges"><span class="operator">${n.op} · ${n.pre}</span>${n.isVip?'<span class="vip">⭐ VIP</span>':''}</div>
+  <div class="number">${n.num}</div>
+  <div class="price">${Number(n.price).toLocaleString("az-AZ")} ₼ <small>başlanğıc</small></div>
+  <div class="card-actions">
+   <button class="copy" onclick="copyNum('${n.num}')">📋 Kopyala</button>
+   <button class="contact" onclick="contact(${n.id})">WhatsApp</button>
+  </div>
+ </article>`).join(""):'<div class="empty">😕 Axtarışınıza uyğun nömrə tapılmadı.</div>';
+}
+function copyNum(n){navigator.clipboard?.writeText(n);alert("Nömrə kopyalandı: "+n)}
+function contact(id){
+ const n=nums.find(x=>x.id===id);
+ if(n.phone) location.href="https://wa.me/"+n.phone+"?text="+encodeURIComponent("Salam, "+n.num+" nömrəsi ilə maraqlanıram.");
+ else alert("Bu nömrə üçün WhatsApp əlaqəsi əlavə edilməyib.");
+}
+function openAdmin(){document.getElementById("modal").classList.add("show");syncFormPrefixes();renderAdmin()}
+function closeAdmin(){document.getElementById("modal").classList.remove("show")}
+function addNumber(){
+ const num=document.getElementById("num").value.trim(),op=document.getElementById("op").value,pre=document.getElementById("pre").value;
+ const price=document.getElementById("price").value,phone=document.getElementById("phone").value.trim();
+ if(!num||!price){alert("Nömrə və qiyməti daxil edin.");return}
+ nums.unshift({id:Date.now(),num,op,pre,price:Number(price),isVip:document.getElementById("isVip").checked,phone});
+ save();document.getElementById("num").value="";document.getElementById("price").value="";document.getElementById("phone").value="";
+ document.getElementById("isVip").checked=false;render();renderAdmin();
+}
+function renderAdmin(){
+ document.getElementById("adminList").innerHTML=nums.map(n=>`
+ <div class="row"><div><b>${n.num}</b><br><small>${n.op} · ${n.pre} · ${n.price} ₼ ${n.isVip?"⭐":""}</small></div>
+ <button onclick="removeNumber(${n.id})">🗑 Sil</button></div>`).join("");
+}
+function removeNumber(id){
+ if(confirm("Bu nömrəni silmək istəyirsiniz?")){nums=nums.filter(n=>n.id!==id);save();render();renderAdmin()}
+}
+fillPrefixes();syncFormPrefixes();render();
+</script>
+</body>
+</html>
