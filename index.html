@@ -3,12 +3,17 @@
 <header><div class="logo">VIP Nömrə</div><a href="admin.html" style="font-size:.8rem;color:var(--mut)">Admin</a></header>
 <h1>Yadda qalan nömrə seç</h1><p class="sub">Azercell, Bakcell və Nar nömrələri. Seç, sifariş ver, biz əlaqə saxlayaq.</p>
 <div class="filters">
-<input id="q" placeholder="Rəqəm axtar (məs. 777)" inputmode="numeric">
-<select id="mode"><option value="c">Ehtiva edir</option><option value="s">Bununla başlayır</option><option value="e">Bununla bitir</option></select>
-<select id="op"><option value="">Bütün operatorlar</option><option>Azercell</option><option>Bakcell</option><option>Nar</option></select>
-<select id="cat"><option value="">Bütün kateqoriyalar</option><option>VIP</option><option>Gold</option><option>Standart</option></select>
+<select id="pf"><option value="">Bütün operator və prefikslər</option>
+<optgroup label="Azercell"><option value="op:Azercell">Bütün Azercell</option><option value="050">050</option><option value="051">051</option><option value="010">010</option></optgroup>
+<optgroup label="Bakcell"><option value="op:Bakcell">Bütün Bakcell</option><option value="055">055</option><option value="099">099</option></optgroup>
+<optgroup label="Nar"><option value="op:Nar">Bütün Nar</option><option value="070">070</option><option value="077">077</option></optgroup>
+<optgroup label="Naxtel"><option value="060">060</option></optgroup></select>
+
+<select id="cat"><option value="">Bütün kateqoriyalar</option><option>VIP</option><option>Qızıl</option><option>Gümüş</option><option>Bürünc</option></select>
 <input id="max" type="number" placeholder="Maks. qiymət ₼">
 </div>
+<div class="pat"><input maxlength="1" inputmode="numeric" aria-label="rəqəm"><input maxlength="1" inputmode="numeric" aria-label="rəqəm"><input maxlength="1" inputmode="numeric" aria-label="rəqəm"><input maxlength="1" inputmode="numeric" aria-label="rəqəm"><input maxlength="1" inputmode="numeric" aria-label="rəqəm"><input maxlength="1" inputmode="numeric" aria-label="rəqəm"><input maxlength="1" inputmode="numeric" aria-label="rəqəm"></div>
+<p class="hint">Prefiksdən sonrakı 7 rəqəm: istədiyiniz xanaya rəqəm yazın, boş xanalar istənilən rəqəm sayılır. <a href="#" id="clr">Təmizlə</a></p>
 <div id="list" class="grid"></div>
 </div>
 <div class="modal" id="m"><form class="box" id="f">
@@ -26,8 +31,8 @@
 const $=id=>document.getElementById(id);let all=[],cur=null;
 async function load(){const{data,error}=await db.from("numbers").select("*").neq("status","satılıb").order("price");
  if(error){$("list").innerHTML='<p class="empty">Nömrələr yüklənmədi. config.js yoxlayın.</p>';return}all=data;render()}
-function render(){const q=$("q").value.replace(/\D/g,""),md=$("mode").value,op=$("op").value,ct=$("cat").value,mx=+$("max").value;
- const r=all.filter(x=>(!q||(md=="s"?x.phone.startsWith(q):md=="e"?x.phone.endsWith(q):x.phone.includes(q)))&&(!op||x.operator==op)&&(!ct||x.category==ct)&&(!mx||x.price<=mx));
+function render(){const pf=$("pf").value,dg=[...document.querySelectorAll(".pat input")].map(i=>i.value),ct=$("cat").value,mx=+$("max").value;
+ const r=all.filter(x=>(!pf||(pf.startsWith("op:")?x.operator==pf.slice(3):x.phone.startsWith(pf)))&&dg.every((v,i)=>!v||x.phone[3+i]==v)&&(!ct||x.category==ct)&&(!mx||x.price<=mx));
  $("list").innerHTML=r.length?r.map(x=>`<div class="card"><span class="tag ${esc(x.category)}">${esc(x.category)}</span> <span class="tag">${esc(x.operator)}</span><div class="num">${fmt(x.phone)}</div><div class="price">${esc(x.price)} ₼</div>${x.status=="rezerv"?'<span class="tag">Rezerv olunub</span>':`<button class="gold" onclick="order(${x.id})">Sifariş et</button>`}</div>`).join(""):'<p class="empty">Bu filtrlə nömrə tapılmadı. Axtarışı dəyişin.</p>'}
 function order(id){cur=all.find(x=>x.id==id);$("mt").textContent=fmt(cur.phone);
  $("wa").href=`https://wa.me/${WHATSAPP}?text=${encodeURIComponent("Salam, "+fmt(cur.phone)+" nömrəsini almaq istəyirəm")}`;$("m").classList.add("on")}
@@ -35,5 +40,7 @@ $("f").onsubmit=async e=>{e.preventDefault();
  const{error}=await db.from("orders").insert({number_id:cur.id,phone:cur.phone,name:$("n").value,contact:$("c").value,note:$("t").value});
  if(error)return alert("Sifariş göndərilmədi. Yenidən cəhd edin.");
  alert("Sifarişiniz qəbul olundu. Tezliklə əlaqə saxlayacağıq.");$("m").classList.remove("on");e.target.reset()};
-["q","mode","op","cat","max"].forEach(i=>$(i).oninput=render);load();
+["pf","cat","max"].forEach(i=>$(i).oninput=render);
+document.querySelectorAll(".pat input").forEach((el,i,a)=>{el.oninput=()=>{el.value=el.value.replace(/\D/g,"");if(el.value&&a[i+1])a[i+1].focus();render()};el.onkeydown=e=>{if(e.key=="Backspace"&&!el.value&&a[i-1])a[i-1].focus()};el.onfocus=()=>el.select()});
+$("clr").onclick=e=>{e.preventDefault();document.querySelectorAll(".pat input").forEach(i=>i.value="");render()};load();
 </script></body></html>

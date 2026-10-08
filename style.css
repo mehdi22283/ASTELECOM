@@ -18,7 +18,7 @@ button.red{background:#c2384a;padding:6px 12px}
 .card:hover{transform:translateY(-3px);border-color:var(--gold)}
 .num{font-size:1.6rem;font-weight:800;letter-spacing:1.5px;margin:10px 0 4px;font-variant-numeric:tabular-nums}
 .tag{font-size:.75rem;padding:3px 10px;border-radius:99px;background:#26254a;color:var(--mut)}
-.tag.VIP{background:#3a2d0b;color:var(--gold)}.tag.Gold{background:#2c2410;color:#f0d98a}
+.tag.VIP{background:linear-gradient(135deg,#f3d68a,#c99a2e);color:#1a1405;font-weight:700}.tag.Qızıl{background:#2c2410;color:#f0d98a}.tag.Gümüş{background:#2a2d38;color:#d5d9e4}.tag.Bürünc{background:#3a2412;color:#d9935a}
 .price{color:var(--gold);font-weight:700;margin:6px 0 14px}
 .modal{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;padding:16px}
 .modal.on{display:flex}
@@ -32,3 +32,6 @@ td,th{padding:8px;border-bottom:1px solid var(--line);text-align:left;font-size:
 .row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
 .empty{text-align:center;color:var(--mut);padding:30px;grid-column:1/-1}
 a{color:var(--gold)}
+.pat{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.pat input{text-align:center;font-size:1.4rem;font-weight:700;padding:12px 0;width:100%;min-width:0}
+.hint{color:var(--mut);font-size:.8rem;margin:8px 0 18px}
