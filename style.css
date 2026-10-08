@@ -54,3 +54,12 @@ a{color:var(--gold)}
 .ops{display:flex;justify-content:center;gap:10px;margin-bottom:24px}
 .chip{flex:1;max-width:120px;height:54px;background:#000;border:1px solid #33314f;border-radius:14px;display:flex;align-items:center;justify-content:center;padding:8px 10px}
 .chip img{max-width:100%;max-height:100%;object-fit:contain}
+
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cbtn{display:flex;align-items:center;justify-content:center;gap:6px;padding:11px 8px;border-radius:12px;color:#fff;text-decoration:none;font-weight:700;font-size:.85rem;white-space:nowrap}
+.cbtn.wa{background:#25D366}.cbtn.ph{background:#1e88e5}
+.cbtn svg{flex:none}
+.contact{text-align:center;margin:0 0 24px;padding:18px;background:var(--card);border:1px solid var(--line);border-radius:18px}
+.contact h2{font-size:1.2rem;color:var(--gold)}
+.contact p{color:var(--mut);margin:4px 0 14px}
+.card .acts{margin-top:4px}
