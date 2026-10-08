@@ -44,12 +44,13 @@ a{color:var(--gold)}
 .wmrow i{width:clamp(18px,8vw,48px);height:2px;background:linear-gradient(90deg,transparent,var(--gold))}
 .wmrow i:last-child{transform:scaleX(-1)}
 .wm{font-size:clamp(1.8rem,9vw,3rem);font-weight:900;letter-spacing:.16em;background:linear-gradient(180deg,#fff3c4,#e8c36a 50%,#a9741a);-webkit-background-clip:text;background-clip:text;color:transparent}
-.prices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.prices{display:flex;justify-content:center;gap:10px;margin-bottom:10px}
+.prices input{width:112px;padding:11px 8px;text-align:center}
 .go{width:100%;margin-bottom:22px;padding:13px;font-size:1.05rem}
 
 .hero{gap:4px;filter:drop-shadow(0 0 14px #e8c36a44)}
 .as{font-family:Georgia,"Times New Roman",serif;font-weight:900;font-size:clamp(4rem,22vw,6.5rem);line-height:1;letter-spacing:.04em;background:linear-gradient(180deg,#fff3c4,#e8c36a 50%,#a9741a);-webkit-background-clip:text;background-clip:text;color:transparent}
 .wm{font-size:clamp(.95rem,4.5vw,1.3rem);letter-spacing:.35em}
 .ops{display:flex;justify-content:center;gap:10px;margin-bottom:24px}
-.chip{flex:1;max-width:120px;height:54px;background:#fff;border-radius:14px;display:flex;align-items:center;justify-content:center;padding:8px 10px}
+.chip{flex:1;max-width:120px;height:54px;background:#000;border:1px solid #33314f;border-radius:14px;display:flex;align-items:center;justify-content:center;padding:8px 10px}
 .chip img{max-width:100%;max-height:100%;object-fit:contain}
