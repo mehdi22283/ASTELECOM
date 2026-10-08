@@ -77,3 +77,16 @@ input::placeholder{color:#a9a9c8}
 .btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px}
 .btns button{width:100%;padding:13px;font-size:1.05rem;margin:0}
 .clr{background:linear-gradient(135deg,var(--vio),#b06cff);color:#fff}
+
+.soc{margin-top:8px}
+.cbtn.tt{background:#000;border:1px solid #fe2c55;box-shadow:inset 0 -2px 0 #25f4ee}
+.cbtn.ig{background:linear-gradient(135deg,#f58529,#dd2a7b 50%,#8134af)}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+#cnt{color:var(--txt);font-weight:600}
+.barr{display:flex;gap:8px;align-items:center;margin-left:auto}
+.barr select{padding:9px 12px}
+.fvb{padding:9px 14px;background:#1d1c36;border:1px solid var(--line);color:var(--txt)}
+.fvb.on{border-color:#ff4d6d;color:#ff4d6d}
+.card{position:relative}
+.card .fav{position:absolute;top:8px;right:10px;padding:2px 6px;background:transparent;border:0;font-size:1.5rem;line-height:1;color:var(--mut)}
+.card .fav.on{color:#ff4d6d}
