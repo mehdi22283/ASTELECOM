@@ -1,0 +1,39 @@
+<!DOCTYPE html><html lang="az"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>VIP Nömrələr</title><link rel="stylesheet" href="style.css"></head><body>
+<div class="wrap">
+<header><div class="logo">VIP Nömrə</div><a href="admin.html" style="font-size:.8rem;color:var(--mut)">Admin</a></header>
+<h1>Yadda qalan nömrə seç</h1><p class="sub">Azercell, Bakcell və Nar nömrələri. Seç, sifariş ver, biz əlaqə saxlayaq.</p>
+<div class="filters">
+<input id="q" placeholder="Rəqəm axtar (məs. 777)" inputmode="numeric">
+<select id="mode"><option value="c">Ehtiva edir</option><option value="s">Bununla başlayır</option><option value="e">Bununla bitir</option></select>
+<select id="op"><option value="">Bütün operatorlar</option><option>Azercell</option><option>Bakcell</option><option>Nar</option></select>
+<select id="cat"><option value="">Bütün kateqoriyalar</option><option>VIP</option><option>Gold</option><option>Standart</option></select>
+<input id="max" type="number" placeholder="Maks. qiymət ₼">
+</div>
+<div id="list" class="grid"></div>
+</div>
+<div class="modal" id="m"><form class="box" id="f">
+<h3 id="mt"></h3>
+<input id="n" placeholder="Adınız" required maxlength="80">
+<input id="c" placeholder="Telefon və ya Telegram" required maxlength="80">
+<textarea id="t" placeholder="Qeyd (istəyə bağlı)" maxlength="300"></textarea>
+<button class="gold">Sifarişi göndər</button>
+<a id="wa" target="_blank" style="text-align:center;font-size:.85rem">WhatsApp ilə yaz</a>
+<button type="button" class="ghost" onclick="document.getElementById('m').classList.remove('on')">Bağla</button>
+</form></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
+<script>
+const $=id=>document.getElementById(id);let all=[],cur=null;
+async function load(){const{data,error}=await db.from("numbers").select("*").neq("status","satılıb").order("price");
+ if(error){$("list").innerHTML='<p class="empty">Nömrələr yüklənmədi. config.js yoxlayın.</p>';return}all=data;render()}
+function render(){const q=$("q").value.replace(/\D/g,""),md=$("mode").value,op=$("op").value,ct=$("cat").value,mx=+$("max").value;
+ const r=all.filter(x=>(!q||(md=="s"?x.phone.startsWith(q):md=="e"?x.phone.endsWith(q):x.phone.includes(q)))&&(!op||x.operator==op)&&(!ct||x.category==ct)&&(!mx||x.price<=mx));
+ $("list").innerHTML=r.length?r.map(x=>`<div class="card"><span class="tag ${esc(x.category)}">${esc(x.category)}</span> <span class="tag">${esc(x.operator)}</span><div class="num">${fmt(x.phone)}</div><div class="price">${esc(x.price)} ₼</div>${x.status=="rezerv"?'<span class="tag">Rezerv olunub</span>':`<button class="gold" onclick="order(${x.id})">Sifariş et</button>`}</div>`).join(""):'<p class="empty">Bu filtrlə nömrə tapılmadı. Axtarışı dəyişin.</p>'}
+function order(id){cur=all.find(x=>x.id==id);$("mt").textContent=fmt(cur.phone);
+ $("wa").href=`https://wa.me/${WHATSAPP}?text=${encodeURIComponent("Salam, "+fmt(cur.phone)+" nömrəsini almaq istəyirəm")}`;$("m").classList.add("on")}
+$("f").onsubmit=async e=>{e.preventDefault();
+ const{error}=await db.from("orders").insert({number_id:cur.id,phone:cur.phone,name:$("n").value,contact:$("c").value,note:$("t").value});
+ if(error)return alert("Sifariş göndərilmədi. Yenidən cəhd edin.");
+ alert("Sifarişiniz qəbul olundu. Tezliklə əlaqə saxlayacağıq.");$("m").classList.remove("on");e.target.reset()};
+["q","mode","op","cat","max"].forEach(i=>$(i).oninput=render);load();
+</script></body></html>
