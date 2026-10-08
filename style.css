@@ -35,3 +35,6 @@ a{color:var(--gold)}
 .pat{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
 .pat input{text-align:center;font-size:1.4rem;font-weight:700;padding:12px 0;width:100%;min-width:0}
 .hint{color:var(--mut);font-size:.8rem;margin:8px 0 18px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.2rem;color:var(--gold);letter-spacing:.5px}
+.btn{display:block;text-align:center;text-decoration:none;padding:11px 14px;border-radius:12px;font-weight:600}
+.btn.gold{background:linear-gradient(135deg,#f3d68a,#c99a2e);color:#1a1405}

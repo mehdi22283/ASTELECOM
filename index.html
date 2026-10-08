@@ -1,46 +1,40 @@
-<!DOCTYPE html><html lang="az"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>VIP Nömrələr</title><link rel="stylesheet" href="style.css"></head><body>
+<!DOCTYPE html><html lang="az"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ASTELECOM</title><link rel="stylesheet" href="style.css"></head><body>
 <div class="wrap">
-<header><div class="logo">VIP Nömrə</div><a href="admin.html" style="font-size:.8rem;color:var(--mut)">Admin</a></header>
-<h1>Yadda qalan nömrə seç</h1><p class="sub">Azercell, Bakcell və Nar nömrələri. Seç, sifariş ver, biz əlaqə saxlayaq.</p>
+<header>
+<div class="brand"><svg width="38" height="38" viewBox="0 0 40 40" aria-hidden="true"><defs><linearGradient id="lgd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3d68a"/><stop offset="1" stop-color="#c99a2e"/></linearGradient></defs><rect width="40" height="40" rx="11" fill="url(#lgd)"/><path d="M12 28V18M18 28V13M24 28V9M30 28V15" stroke="#1a1405" stroke-width="3.2" stroke-linecap="round"/></svg><span>ASTELECOM</span></div>
+<a href="admin.html" style="font-size:.8rem;color:var(--mut)">Admin</a>
+</header>
+<h1>Yadda qalan nömrə seç</h1><p class="sub">Azercell, Bakcell və Nar nömrələri. Seç və WhatsApp-da yaz.</p>
 <div class="filters">
-<select id="pf"><option value="">Bütün operator və prefikslər</option>
+<select id="pf"><option value="">Bütün operatorlar və prefikslər</option>
 <optgroup label="Azercell"><option value="op:Azercell">Bütün Azercell</option><option value="050">050</option><option value="051">051</option><option value="010">010</option></optgroup>
 <optgroup label="Bakcell"><option value="op:Bakcell">Bütün Bakcell</option><option value="055">055</option><option value="099">099</option></optgroup>
 <optgroup label="Nar"><option value="op:Nar">Bütün Nar</option><option value="070">070</option><option value="077">077</option></optgroup>
 <optgroup label="Naxtel"><option value="060">060</option></optgroup></select>
-
-<select id="cat"><option value="">Bütün kateqoriyalar</option><option>VIP</option><option>Qızıl</option><option>Gümüş</option><option>Bürünc</option></select>
+<select id="cat"><option value="">Bütün kateqoriyalar</option><option value="VIP">👑 VIP</option><option value="Qızıl">🥇 Qızıl</option><option value="Gümüş">🥈 Gümüş</option><option value="Bürünc">🥉 Bürünc</option></select>
 <input id="max" type="number" placeholder="Maks. qiymət ₼">
 </div>
-<div class="pat"><input maxlength="1" inputmode="numeric" aria-label="rəqəm"><input maxlength="1" inputmode="numeric" aria-label="rəqəm"><input maxlength="1" inputmode="numeric" aria-label="rəqəm"><input maxlength="1" inputmode="numeric" aria-label="rəqəm"><input maxlength="1" inputmode="numeric" aria-label="rəqəm"><input maxlength="1" inputmode="numeric" aria-label="rəqəm"><input maxlength="1" inputmode="numeric" aria-label="rəqəm"></div>
+<div class="pat">
+<input maxlength="2" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-label="1-ci rəqəm"><input maxlength="2" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-label="2-ci rəqəm"><input maxlength="2" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-label="3-cü rəqəm"><input maxlength="2" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-label="4-cü rəqəm"><input maxlength="2" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-label="5-ci rəqəm"><input maxlength="2" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-label="6-cı rəqəm"><input maxlength="2" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-label="7-ci rəqəm">
+</div>
 <p class="hint">Prefiksdən sonrakı 7 rəqəm: istədiyiniz xanaya rəqəm yazın, boş xanalar istənilən rəqəm sayılır. <a href="#" id="clr">Təmizlə</a></p>
 <div id="list" class="grid"></div>
 </div>
-<div class="modal" id="m"><form class="box" id="f">
-<h3 id="mt"></h3>
-<input id="n" placeholder="Adınız" required maxlength="80">
-<input id="c" placeholder="Telefon və ya Telegram" required maxlength="80">
-<textarea id="t" placeholder="Qeyd (istəyə bağlı)" maxlength="300"></textarea>
-<button class="gold">Sifarişi göndər</button>
-<a id="wa" target="_blank" style="text-align:center;font-size:.85rem">WhatsApp ilə yaz</a>
-<button type="button" class="ghost" onclick="document.getElementById('m').classList.remove('on')">Bağla</button>
-</form></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="config.js"></script>
 <script>
-const $=id=>document.getElementById(id);let all=[],cur=null;
+const $=id=>document.getElementById(id);let all=[];const IC={VIP:"👑",Qızıl:"🥇",Gümüş:"🥈",Bürünc:"🥉"};
 async function load(){const{data,error}=await db.from("numbers").select("*").neq("status","satılıb").order("price");
  if(error){$("list").innerHTML='<p class="empty">Nömrələr yüklənmədi. config.js yoxlayın.</p>';return}all=data;render()}
 function render(){const pf=$("pf").value,dg=[...document.querySelectorAll(".pat input")].map(i=>i.value),ct=$("cat").value,mx=+$("max").value;
  const r=all.filter(x=>(!pf||(pf.startsWith("op:")?x.operator==pf.slice(3):x.phone.startsWith(pf)))&&dg.every((v,i)=>!v||x.phone[3+i]==v)&&(!ct||x.category==ct)&&(!mx||x.price<=mx));
- $("list").innerHTML=r.length?r.map(x=>`<div class="card"><span class="tag ${esc(x.category)}">${esc(x.category)}</span> <span class="tag">${esc(x.operator)}</span><div class="num">${fmt(x.phone)}</div><div class="price">${esc(x.price)} ₼</div>${x.status=="rezerv"?'<span class="tag">Rezerv olunub</span>':`<button class="gold" onclick="order(${x.id})">Sifariş et</button>`}</div>`).join(""):'<p class="empty">Bu filtrlə nömrə tapılmadı. Axtarışı dəyişin.</p>'}
-function order(id){cur=all.find(x=>x.id==id);$("mt").textContent=fmt(cur.phone);
- $("wa").href=`https://wa.me/${WHATSAPP}?text=${encodeURIComponent("Salam, "+fmt(cur.phone)+" nömrəsini almaq istəyirəm")}`;$("m").classList.add("on")}
-$("f").onsubmit=async e=>{e.preventDefault();
- const{error}=await db.from("orders").insert({number_id:cur.id,phone:cur.phone,name:$("n").value,contact:$("c").value,note:$("t").value});
- if(error)return alert("Sifariş göndərilmədi. Yenidən cəhd edin.");
- alert("Sifarişiniz qəbul olundu. Tezliklə əlaqə saxlayacağıq.");$("m").classList.remove("on");e.target.reset()};
+ $("list").innerHTML=r.length?r.map(x=>`<div class="card"><span class="tag ${esc(x.category)}">${IC[x.category]||""} ${esc(x.category)}</span> <span class="tag">${esc(x.operator)}</span><div class="num">${fmt(x.phone)}</div><div class="price">${esc(x.price)} ₼</div>${x.status=="rezerv"?'<span class="tag">Rezerv olunub</span>':`<a class="btn gold" target="_blank" rel="noopener" href="https://wa.me/${WHATSAPP}?text=${encodeURIComponent("Salam,mən "+x.phone+" nömrəsi ilə maraqlanıram")}" onclick="log(${x.id})">Sifariş et</a>`}</div>`).join(""):'<p class="empty">Bu axtarışla nömrə tapılmadı. Xanaları və ya filtrləri dəyişin.</p>'}
+const log=id=>{const x=all.find(n=>n.id==id);db.from("orders").insert({number_id:id,phone:x.phone,name:"WhatsApp",contact:"WhatsApp"}).then(()=>{})};
 ["pf","cat","max"].forEach(i=>$(i).oninput=render);
-document.querySelectorAll(".pat input").forEach((el,i,a)=>{el.oninput=()=>{el.value=el.value.replace(/\D/g,"");if(el.value&&a[i+1])a[i+1].focus();render()};el.onkeydown=e=>{if(e.key=="Backspace"&&!el.value&&a[i-1])a[i-1].focus()};el.onfocus=()=>el.select()});
-$("clr").onclick=e=>{e.preventDefault();document.querySelectorAll(".pat input").forEach(i=>i.value="");render()};load();
+document.querySelectorAll(".pat input").forEach((el,i,a)=>{
+ el.oninput=()=>{el.value=el.value.replace(/\D/g,"").slice(-1);if(el.value&&a[i+1])a[i+1].focus();render()};
+ el.onkeydown=e=>{if(e.key=="Backspace"&&!el.value&&a[i-1])a[i-1].focus()};
+ el.onfocus=()=>el.select()});
+$("clr").onclick=e=>{e.preventDefault();document.querySelectorAll(".pat input").forEach(i=>i.value="");render()};
+load();
 </script></body></html>

@@ -1,6 +1,6 @@
 <!DOCTYPE html><html lang="az"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin</title><link rel="stylesheet" href="style.css"></head><body>
 <div class="wrap">
-<header><div class="logo">Admin panel</div><button class="ghost" id="out" style="display:none">Çıxış</button></header>
+<header><div class="logo">ASTELECOM · Admin</div><button class="ghost" id="out" style="display:none">Çıxış</button></header>
 <form id="lg" class="box" style="margin:60px auto"><h3>Giriş</h3><input id="em" type="email" placeholder="Email" required><input id="pw" type="password" placeholder="Şifrə" required><button>Daxil ol</button></form>
 <div id="pn" style="display:none">
 <div class="stats" id="st"></div>
@@ -9,7 +9,7 @@
 <form id="af" class="filters">
 <input id="p" placeholder="Nömrə: 0507777777" required pattern="\d{10}" inputmode="numeric">
 <select id="op"><option>Azercell</option><option>Bakcell</option><option>Nar</option></select>
-<select id="ct"><option>VIP</option><option>Qızıl</option><option>Gümüş</option><option>Bürünc</option></select>
+<select id="ct"><option value="VIP">👑 VIP</option><option value="Qızıl">🥇 Qızıl</option><option value="Gümüş">🥈 Gümüş</option><option value="Bürünc">🥉 Bürünc</option></select>
 <input id="pr" type="number" placeholder="Qiymət ₼" required min="0">
 <button class="gold">Nömrə əlavə et</button>
 </form>
@@ -21,7 +21,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="config.js"></script>
 <script>
-const $=id=>document.getElementById(id);let N=[],O=[];
+const $=id=>document.getElementById(id);let N=[],O=[];const IC={VIP:"👑",Qızıl:"🥇",Gümüş:"🥈",Bürünc:"🥉"};
 async function check(){const{data:{session}}=await db.auth.getSession();
  $("lg").style.display=session?"none":"";$("pn").style.display=$("out").style.display=session?"":"none";if(session)load()}
 $("lg").onsubmit=async e=>{e.preventDefault();const{error}=await db.auth.signInWithPassword({email:$("em").value,password:$("pw").value});error?alert("Email və ya şifrə səhvdir"):check()};
@@ -31,7 +31,7 @@ async function load(){const[n,o]=await Promise.all([db.from("numbers").select("*
 function draw(){const c=s=>N.filter(x=>x.status==s).length;
  $("st").innerHTML=[["Aktiv",c("aktiv")],["Rezerv",c("rezerv")],["Satılıb",c("satılıb")],["Yeni sifariş",O.filter(x=>x.status=="yeni").length]].map(a=>`<div class="stat"><b>${a[1]}</b>${a[0]}</div>`).join("");
  const sel=(v,a)=>a.map(x=>`<option ${x==v?"selected":""}>${x}</option>`).join("");
- $("nt").innerHTML="<tr><th>Nömrə<th>Operator<th>Kateqoriya<th>Qiymət<th>Status<th></tr>"+N.map(x=>`<tr><td>${fmt(x.phone)}<td>${esc(x.operator)}<td>${esc(x.category)}<td><a href="#" onclick="price(${x.id});return false">${esc(x.price)} ₼ ✎</a><td><select onchange="upd(${x.id},this.value)">${sel(x.status,["aktiv","rezerv","satılıb"])}</select><td><button class="red" onclick="del(${x.id})">Sil</button></tr>`).join("");
+ $("nt").innerHTML="<tr><th>Nömrə<th>Operator<th>Kateqoriya<th>Qiymət<th>Status<th></tr>"+N.map(x=>`<tr><td>${fmt(x.phone)}<td>${esc(x.operator)}<td>${IC[x.category]||""} ${esc(x.category)}<td><a href="#" onclick="price(${x.id});return false">${esc(x.price)} ₼ ✎</a><td><select onchange="upd(${x.id},this.value)">${sel(x.status,["aktiv","rezerv","satılıb"])}</select><td><button class="red" onclick="del(${x.id})">Sil</button></tr>`).join("");
  $("ot").innerHTML="<tr><th>Tarix<th>Nömrə<th>Ad<th>Əlaqə<th>Qeyd<th>Status<th></tr>"+O.map(x=>`<tr><td>${new Date(x.created_at).toLocaleString("az")}<td>${fmt(x.phone)}<td>${esc(x.name)}<td>${esc(x.contact)}<td>${esc(x.note)}<td><select onchange="ost(${x.id},this.value)">${sel(x.status,["yeni","əlaqə saxlanıldı","tamamlandı"])}</select><td><button class="red" onclick="odel(${x.id})">Sil</button></tr>`).join("")}
 const run=async p=>{const{error}=await p;if(error)alert(error.message);load()};
 const upd=(id,s)=>run(db.from("numbers").update({status:s}).eq("id",id));
