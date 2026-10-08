@@ -1,4 +1,4 @@
-:root{--bg:#0c0b17;--card:#16152a;--line:#2a2845;--gold:#e8c36a;--vio:#7c5cff;--txt:#f1f1f6;--mut:#9a9ab8}
+:root{--bg:#0c0b17;--card:#16152a;--line:#2a2845;--gold:#e8c36a;--vio:#7c5cff;--txt:#f1f1f6;--mut:#cfcfe6}
 *{box-sizing:border-box;margin:0}
 body{font-family:system-ui,-apple-system,sans-serif;background:radial-gradient(circle at 50% -10%,#241c4d,var(--bg) 55%) fixed;color:var(--txt);min-height:100vh}
 .wrap{max-width:1100px;margin:auto;padding:16px}
@@ -13,7 +13,7 @@ button.gold{background:linear-gradient(135deg,#f3d68a,#c99a2e);color:#1a1405}
 button.ghost{background:transparent;border:1px solid var(--line)}
 button.red{background:#c2384a;padding:6px 12px}
 .filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:20px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;transition:.2s}
 .card:hover{transform:translateY(-3px);border-color:var(--gold)}
 .num{font-size:1.6rem;font-weight:800;letter-spacing:1.5px;margin:10px 0 4px;font-variant-numeric:tabular-nums}
@@ -63,3 +63,19 @@ a{color:var(--gold)}
 .contact h2{font-size:1.2rem;color:var(--gold)}
 .contact p{color:var(--mut);margin:4px 0 14px}
 .card .acts{margin-top:4px}
+
+.card{overflow:hidden}
+.nrow{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0}
+.nrow .num{font-size:1.4rem;letter-spacing:1px;white-space:nowrap;min-width:0}
+.olg{flex:none;width:68px;height:34px;background:#000;border:1px solid #33314f;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:4px 6px;overflow:hidden}
+.olg img{max-width:100%;max-height:100%;object-fit:contain;display:block}
+.tag{font-size:.82rem;color:#e6e6f5;background:#2f2d5c}
+.tag.VIP{color:#1a1405;background:linear-gradient(135deg,#f3d68a,#c99a2e)}
+.tag.Qızıl{background:#4a3a12;color:#ffe9a6}.tag.Gümüş{background:#454a5c;color:#fff}.tag.Bürünc{background:#5a3518;color:#ffc799}
+.hint{font-size:.9rem;color:#dcdcf0}
+input::placeholder{color:#a9a9c8}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px}
+.btns button{width:100%;padding:13px;font-size:1.05rem;margin:0}
+.clr{background:linear-gradient(135deg,var(--vio),#b06cff);color:#fff}
+.blink{animation:blink .6s ease-out}
+@keyframes blink{0%,100%{filter:none;box-shadow:none}25%{filter:brightness(1.8);box-shadow:0 0 0 3px #fff8,0 0 18px var(--gold)}50%{filter:brightness(.8);box-shadow:none}75%{filter:brightness(1.8);box-shadow:0 0 0 3px #fff8,0 0 18px var(--gold)}}
