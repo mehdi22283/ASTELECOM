@@ -1,10 +1,10 @@
 <!DOCTYPE html><html lang="az"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ASTELECOM</title><link rel="stylesheet" href="style.css"></head><body>
 <div class="wrap">
-<header>
-<div class="brand"><svg width="38" height="38" viewBox="0 0 40 40" aria-hidden="true"><defs><linearGradient id="lgd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3d68a"/><stop offset="1" stop-color="#c99a2e"/></linearGradient></defs><rect width="40" height="40" rx="11" fill="url(#lgd)"/><path d="M12 28V18M18 28V13M24 28V9M30 28V15" stroke="#1a1405" stroke-width="3.2" stroke-linecap="round"/></svg><span>ASTELECOM</span></div>
-<a href="admin.html" style="font-size:.8rem;color:var(--mut)">Admin</a>
-</header>
-<h1>Yadda qalan nömrə seç</h1><p class="sub">Azercell, Bakcell və Nar nömrələri. Seç və WhatsApp-da yaz.</p>
+<a class="hero" href="admin.html" aria-label="ASTELECOM">
+<svg width="84" height="84" viewBox="0 0 84 84" aria-hidden="true"><defs><linearGradient id="lgd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff0b8"/><stop offset=".5" stop-color="#e8c36a"/><stop offset="1" stop-color="#a9741a"/></linearGradient></defs><rect x="3" y="3" width="78" height="78" rx="22" fill="url(#lgd)"/><rect x="9" y="9" width="66" height="66" rx="17" fill="none" stroke="#1a1405" stroke-opacity=".35" stroke-width="1.5"/><g fill="#1a1405"><circle cx="29" cy="23" r="4.2"/><circle cx="42" cy="23" r="4.2"/><circle cx="55" cy="23" r="4.2"/><circle cx="29" cy="36" r="4.2"/><circle cx="42" cy="36" r="4.2"/><circle cx="55" cy="36" r="4.2"/><circle cx="29" cy="49" r="4.2"/><circle cx="42" cy="49" r="4.2"/><circle cx="55" cy="49" r="4.2"/><circle cx="29" cy="62" r="4.2"/><circle cx="42" cy="62" r="4.2"/><circle cx="55" cy="62" r="4.2"/></g></svg>
+<div class="wmrow"><i></i><span class="wm">ASTELECOM</span><i></i></div>
+</a>
+<div class="ops"><span class="op az">Azercell</span><span class="op bk">Bakcell</span><span class="op nr">Nar Mobile</span></div>
 <div class="filters">
 <select id="pf"><option value="">Bütün operatorlar və prefikslər</option>
 <optgroup label="Azercell"><option value="op:Azercell">Bütün Azercell</option><option value="050">050</option><option value="051">051</option><option value="010">010</option></optgroup>
@@ -12,29 +12,32 @@
 <optgroup label="Nar"><option value="op:Nar">Bütün Nar</option><option value="070">070</option><option value="077">077</option></optgroup>
 <optgroup label="Naxtel"><option value="060">060</option></optgroup></select>
 <select id="cat"><option value="">Bütün kateqoriyalar</option><option value="VIP">👑 VIP</option><option value="Qızıl">🥇 Qızıl</option><option value="Gümüş">🥈 Gümüş</option><option value="Bürünc">🥉 Bürünc</option></select>
-<input id="max" type="number" placeholder="Maks. qiymət ₼">
 </div>
 <div class="pat">
 <input maxlength="2" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-label="1-ci rəqəm"><input maxlength="2" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-label="2-ci rəqəm"><input maxlength="2" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-label="3-cü rəqəm"><input maxlength="2" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-label="4-cü rəqəm"><input maxlength="2" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-label="5-ci rəqəm"><input maxlength="2" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-label="6-cı rəqəm"><input maxlength="2" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-label="7-ci rəqəm">
 </div>
 <p class="hint">Prefiksdən sonrakı 7 rəqəm: istədiyiniz xanaya rəqəm yazın, boş xanalar istənilən rəqəm sayılır. <a href="#" id="clr">Təmizlə</a></p>
+<div class="prices"><input id="mn" type="number" min="0" inputmode="numeric" placeholder="Minimum qiymət ₼"><input id="mx" type="number" min="0" inputmode="numeric" placeholder="Maksimum qiymət ₼"></div>
+<button id="go" class="gold go">Axtar</button>
 <div id="list" class="grid"></div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="config.js"></script>
 <script>
 const $=id=>document.getElementById(id);let all=[];const IC={VIP:"👑",Qızıl:"🥇",Gümüş:"🥈",Bürünc:"🥉"};
+const boxes=()=>[...document.querySelectorAll(".pat input")];
 async function load(){const{data,error}=await db.from("numbers").select("*").neq("status","satılıb").order("price");
  if(error){$("list").innerHTML='<p class="empty">Nömrələr yüklənmədi. config.js yoxlayın.</p>';return}all=data;render()}
-function render(){const pf=$("pf").value,dg=[...document.querySelectorAll(".pat input")].map(i=>i.value),ct=$("cat").value,mx=+$("max").value;
- const r=all.filter(x=>(!pf||(pf.startsWith("op:")?x.operator==pf.slice(3):x.phone.startsWith(pf)))&&dg.every((v,i)=>!v||x.phone[3+i]==v)&&(!ct||x.category==ct)&&(!mx||x.price<=mx));
+function render(){const pf=$("pf").value,dg=boxes().map(i=>i.value),ct=$("cat").value,mn=+$("mn").value,mx=+$("mx").value;
+ const r=all.filter(x=>(!pf||(pf.startsWith("op:")?x.operator==pf.slice(3):x.phone.startsWith(pf)))&&dg.every((v,i)=>!v||x.phone[3+i]==v)&&(!ct||x.category==ct)&&(!mn||x.price>=mn)&&(!mx||x.price<=mx));
  $("list").innerHTML=r.length?r.map(x=>`<div class="card"><span class="tag ${esc(x.category)}">${IC[x.category]||""} ${esc(x.category)}</span> <span class="tag">${esc(x.operator)}</span><div class="num">${fmt(x.phone)}</div><div class="price">${esc(x.price)} ₼</div>${x.status=="rezerv"?'<span class="tag">Rezerv olunub</span>':`<a class="btn gold" target="_blank" rel="noopener" href="https://wa.me/${WHATSAPP}?text=${encodeURIComponent("Salam,mən "+x.phone+" nömrəsi ilə maraqlanıram")}" onclick="log(${x.id})">Sifariş et</a>`}</div>`).join(""):'<p class="empty">Bu axtarışla nömrə tapılmadı. Xanaları və ya filtrləri dəyişin.</p>'}
 const log=id=>{const x=all.find(n=>n.id==id);db.from("orders").insert({number_id:id,phone:x.phone,name:"WhatsApp",contact:"WhatsApp"}).then(()=>{})};
-["pf","cat","max"].forEach(i=>$(i).oninput=render);
-document.querySelectorAll(".pat input").forEach((el,i,a)=>{
- el.oninput=()=>{el.value=el.value.replace(/\D/g,"").slice(-1);if(el.value&&a[i+1])a[i+1].focus();render()};
- el.onkeydown=e=>{if(e.key=="Backspace"&&!el.value&&a[i-1])a[i-1].focus()};
+boxes().forEach((el,i,a)=>{
+ el.oninput=()=>{el.value=el.value.replace(/\D/g,"").slice(-1);if(el.value&&a[i+1])a[i+1].focus()};
+ el.onkeydown=e=>{if(e.key=="Enter")render();if(e.key=="Backspace"&&!el.value&&a[i-1])a[i-1].focus()};
  el.onfocus=()=>el.select()});
-$("clr").onclick=e=>{e.preventDefault();document.querySelectorAll(".pat input").forEach(i=>i.value="");render()};
+[$("mn"),$("mx")].forEach(el=>el.onkeydown=e=>{if(e.key=="Enter")render()});
+$("go").onclick=render;
+$("clr").onclick=e=>{e.preventDefault();boxes().forEach(i=>i.value="");$("pf").value=$("cat").value=$("mn").value=$("mx").value="";render()};
 load();
 </script></body></html>

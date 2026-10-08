@@ -38,3 +38,14 @@ a{color:var(--gold)}
 .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.2rem;color:var(--gold);letter-spacing:.5px}
 .btn{display:block;text-align:center;text-decoration:none;padding:11px 14px;border-radius:12px;font-weight:600}
 .btn.gold{background:linear-gradient(135deg,#f3d68a,#c99a2e);color:#1a1405}
+.hero{display:flex;flex-direction:column;align-items:center;gap:12px;padding:20px 0 14px;text-decoration:none}
+.hero svg{filter:drop-shadow(0 0 16px #e8c36a66)}
+.wmrow{display:flex;align-items:center;gap:12px}
+.wmrow i{width:clamp(18px,8vw,48px);height:2px;background:linear-gradient(90deg,transparent,var(--gold))}
+.wmrow i:last-child{transform:scaleX(-1)}
+.wm{font-size:clamp(1.8rem,9vw,3rem);font-weight:900;letter-spacing:.16em;background:linear-gradient(180deg,#fff3c4,#e8c36a 50%,#a9741a);-webkit-background-clip:text;background-clip:text;color:transparent}
+.ops{display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:24px}
+.op{min-width:160px;text-align:center;padding:7px 18px;border-radius:99px;font-weight:800;letter-spacing:.5px;color:#fff;font-size:.95rem}
+.op.az{background:linear-gradient(135deg,#7b3fe4,#c13fb2)}.op.bk{background:linear-gradient(135deg,#1e6fe0,#27b2d6)}.op.nr{background:linear-gradient(135deg,#e5232f,#ff6a3d)}
+.prices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.go{width:100%;margin-bottom:22px;padding:13px;font-size:1.05rem}
