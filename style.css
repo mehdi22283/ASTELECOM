@@ -128,15 +128,3 @@ button:active,.cbtn:active{transform:scale(.94);filter:brightness(1.15)}
 /* Yeni nişanı: ürəyin solunda, yanıb-sönən qırmızı */
 .card .new{position:absolute;top:12px;right:46px;background:#e0334a;color:#fff;font-size:.72rem;font-weight:800;padding:3px 9px;border-radius:99px;animation:blink 1s ease-in-out infinite}
 @keyframes blink{0%,100%{opacity:1;box-shadow:0 0 0 0 #e0334a99}50%{opacity:.35;box-shadow:0 0 0 6px #e0334a00}}
-
-/* Yuxarı qayıt düyməsi: popup dairə, yuxarı çıxanda solaraq itir */
-.up{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));width:46px;height:46px;padding:0;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#16152aee;color:var(--gold);border:1.5px solid var(--gold);box-shadow:0 4px 16px #000a;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:0;visibility:hidden;transform:translateY(14px) scale(.8);transition:opacity .45s ease,transform .45s ease,visibility 0s linear .45s;z-index:40}
-.up.on{opacity:1;visibility:visible;transform:none;transition:opacity .25s ease,transform .25s ease,visibility 0s}
-.up.on:active{transform:scale(.9)}
-
-/* Tətbiq yükləmə bannerı */
-.ins{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));display:none;align-items:center;gap:10px;padding:12px 14px;background:var(--card);border:1px solid var(--gold);border-radius:14px;box-shadow:0 6px 20px #000a;z-index:60;max-width:460px;margin:auto}
-.ins.on{display:flex}
-.ins span{flex:1;font-size:.9rem;color:var(--txt)}
-.ins .gold{padding:9px 14px}
-.inx{width:30px;height:30px;padding:0;border-radius:50%;background:#2f2d5c;color:#fff;font-size:.85rem;display:flex;align-items:center;justify-content:center;flex:none}
