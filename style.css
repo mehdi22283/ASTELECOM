@@ -143,3 +143,7 @@ button:active,.cbtn:active{transform:scale(.94);filter:brightness(1.15)}
 .fl1 .opb{width:100%}
 .fl2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
 .fl2 select{width:100%;min-width:0;font-size:.92rem;padding:11px 8px;text-overflow:ellipsis}
+
+/* Min/Max xanaları: yuxarıdakı iki düymə boyda */
+.prices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.prices input{width:100%;min-width:0;padding:11px 8px;text-align:center;font-size:.92rem}
