@@ -100,3 +100,5 @@ input::placeholder{color:#a9a9c8}
 .ck{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:1rem}
 .ck.op{font-weight:700;color:var(--gold)}
 .ck input{width:20px;height:20px;padding:0;accent-color:var(--gold);flex:none}
+
+.opb{background:#1d1c36;border:1px solid var(--line);font-weight:400;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
