@@ -8,7 +8,8 @@
 <optgroup label="Azercell"><option value="op:Azercell">Bütün Azercell</option><option value="050">050</option><option value="051">051</option><option value="010">010</option></optgroup>
 <optgroup label="Bakcell"><option value="op:Bakcell">Bütün Bakcell</option><option value="055">055</option><option value="099">099</option></optgroup>
 <optgroup label="Nar"><option value="op:Nar">Bütün Nar</option><option value="070">070</option><option value="077">077</option></optgroup></select>
-<button type="button" id="opb" class="opb">Operator və prefiks seçimi</button>
+<button type="button" id="opb" class="opb">Operator və
+prefiks seçimi</button>
 <select id="cat"><option value="">Bütün kateqoriyalar</option><option value="VIP">👑 VIP</option><option value="Qızıl">🥇 Qızıl</option><option value="Gümüş">🥈 Gümüş</option><option value="Bürünc">🥉 Bürünc</option></select>
 <select id="pair"><option value="">Bütün sonluqlar</option><option value="1">Qoşa sonluq Məs 55-55; 23-23</option><option value="2">Güzgü sonluq Məs 21-12; 32-23</option><option value="3">Təkrar sonluq Məs 077 711 77 11</option></select>
 </div>
@@ -29,7 +30,7 @@ const WA='<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" ar
 const LOGO={Azercell:'https://thumb.wikimedia.org/wikipedia/az/thumb/b/bf/Azercell_loqosu.svg/960px-Azercell_loqosu.svg.png?utm_source=az.wikipedia.org&amp;utm_campaign=index&amp;utm_content=thumbnail',Bakcell:'https://upload.wikimedia.org/wikipedia/commons/0/06/Bakcell-logo.png?utm_source=az.wikipedia.org&amp;utm_campaign=index&amp;utm_content=original',Nar:'https://upload.wikimedia.org/wikipedia/commons/f/f7/Nar-new-logo.png?utm_source=az.wikipedia.org&amp;utm_campaign=index&amp;utm_content=original'};
 const olg=o=>LOGO[o]?`<span class="olg"><img src="${LOGO[o]}" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='${o.toLowerCase()}.png'" alt="${esc(o)}"></span>`:'';
 const $=id=>document.getElementById(id);let all=[];const IC={VIP:"👑",Qızıl:"🥇",Gümüş:"🥈",Bürünc:"🥉"};
-let fv=new Set(),onlyFav=false,sel=new Set();const opm=$("opm"),lab=()=>{$("opb").textContent=sel.size?[...sel].map(t=>t.replace("op:","")).join(", "):"Operator və prefiks seçimi"},uncheck=()=>opm.querySelectorAll("input").forEach(i=>i.checked=false);try{fv=new Set(JSON.parse(localStorage.getItem("fav")||"[]"))}catch(e){}
+let fv=new Set(),onlyFav=false,sel=new Set();const opm=$("opm"),lab=()=>{$("opb").textContent=sel.size?[...sel].map(t=>t.replace("op:","")).join(", "):"Operator və\nprefiks seçimi"},uncheck=()=>opm.querySelectorAll("input").forEach(i=>i.checked=false);try{fv=new Set(JSON.parse(localStorage.getItem("fav")||"[]"))}catch(e){}
 const fav=id=>{fv.has(id)?fv.delete(id):fv.add(id);try{localStorage.setItem("fav",JSON.stringify([...fv]))}catch(e){}render()};
 const hl=(p,on)=>{const s=fmt(p);if(!on)return s;const D=(s.match(/\d/g)||[]).length,S=[4,5,8,9].map(i=>i+D-10);let n=-1;return[...s].map(c=>/\d/.test(c)?(n++,S.includes(n)?`<span class="hl">${c}</span>`:c):c).join("")};
 const boxes=()=>[...document.querySelectorAll(".pat input")];

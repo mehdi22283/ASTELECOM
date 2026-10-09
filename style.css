@@ -112,3 +112,5 @@ input::placeholder{color:#a9a9c8}
 .opb{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.25;overflow-wrap:anywhere;min-height:46px}
 
 .hl{color:#1a1405;background:linear-gradient(135deg,#f3d68a,#c99a2e);border-radius:4px;padding:0 2px;margin:0 -1px}
+
+.opb{white-space:pre-line;display:flex;align-items:center;min-height:62px;line-height:1.3}
