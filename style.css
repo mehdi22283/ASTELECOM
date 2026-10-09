@@ -132,3 +132,14 @@ button:active,.cbtn:active{transform:scale(.94);filter:brightness(1.15)}
 /* Quşlu seçimdə toxunduqda çərçivə olmasın */
 .ck,.ck input,.og{-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
 .ck:focus,.ck:focus-within,.ck input:focus,.ck input:focus-visible,.ck input:active{outline:none!important;box-shadow:none!important}
+
+/* Operator düyməsi tam en, kateqoriya və sonluq yanbayan */
+.filters{grid-template-columns:1fr 1fr}
+.filters .opb{grid-column:1/-1}
+.filters select{min-width:0;width:100%;text-overflow:ellipsis}
+
+/* Yeni düzülüş: operator tək sətirdə, kateqoriya + sonluq yanbayan */
+.fl1{margin-bottom:12px}
+.fl1 .opb{width:100%}
+.fl2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.fl2 select{width:100%;min-width:0;font-size:.92rem;padding:11px 8px;text-overflow:ellipsis}
