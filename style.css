@@ -118,3 +118,9 @@ input::placeholder{color:#a9a9c8}
 *{-webkit-tap-highlight-color:transparent}
 .opb{min-height:0;white-space:normal;-webkit-user-select:none;user-select:none}
 .opb:focus,.opb:active{outline:none;box-shadow:none}
+
+/* Toxunma animasiyası */
+button,.cbtn{transition:transform .12s ease,filter .12s ease,box-shadow .12s ease;will-change:transform}
+button:active,.cbtn:active{transform:scale(.94);filter:brightness(1.15)}
+.card .fav:active{transform:scale(1.35)}
+.xbtn:active{transform:scale(.88) rotate(90deg)}
