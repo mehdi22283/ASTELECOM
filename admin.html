@@ -20,8 +20,9 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <div class="modal" id="bm"><div class="box rvbox"><h3>Toplu nömrə əlavə et</h3><p class="sm">Hər sətirdə bir nömrə və qiymət yazın, məsələn: 0554660655 20</p><textarea id="bulk" rows="9" style="width:100%" placeholder="0554660655 20&#10;0558885950 20"></textarea><div class="row"><button class="ghost" onclick="$('bm').classList.remove('on')">Bağla</button><button class="gold" onclick="bulkRead()">Oxu və göstər</button></div></div></div>
 <div class="modal" id="rv"><div class="box rvbox"><h3>Nəticəni yoxlayın</h3><p class="sm" id="rvs"></p><div class="scroll"><table id="rt"></table></div><div class="row"><button class="ghost" onclick="rvClose()">Ləğv et</button><button class="gold" id="rvok" disabled>Təsdiq et</button></div></div></div>
-<div class="modal" id="xm"><div class="box"><h3>Export</h3><label class="sm">Cədvəl</label><select id="xt"><option value="numbers">Nömrələr</option><option value="orders">Sifarişlər</option></select><label class="sm">Format</label><select id="xf"><option value="xlsx">Excel (.xlsx)</option><option value="sql">SQL (.sql)</option><option value="txt">Mətn (.txt)</option></select><div class="row"><button class="ghost" onclick="$('xm').classList.remove('on')">Bağla</button><button class="gold" id="xgo">Yüklə</button></div></div></div>
+<div class="modal" id="xm"><div class="box"><h3>Export</h3><label class="sm">Cədvəl</label><select id="xt"><option value="numbers">Nömrələr</option><option value="orders">Sifarişlər</option></select><label class="sm">Format</label><select id="xf"><option value="xlsx">Excel (.xlsx)</option><option value="csv">CSV (.csv) — cədvəl kimi açılır</option><option value="db">Verilənlər bazası (.db)</option></select><div class="row"><button class="ghost" onclick="$('xm').classList.remove('on')">Bağla</button><button class="gold" id="xgo">Yüklə</button></div></div></div>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/sql-wasm.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
 <script src="config.js"></script>
 <script>
@@ -100,16 +101,21 @@ async function scan(f){rvOpen("Şəkil hazırlanır…");let w;
  catch(err){$("rvs").textContent="Şəkil oxunmadı: "+(err.message||err)+". İnternet bağlantısını yoxlayın."}
  finally{if(w)w.terminate()}}
 $("ex").onclick=()=>$("xm").classList.add("on");
-function dl(name,mime,txt){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:mime+";charset=utf-8"}));a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
-$("xgo").onclick=()=>{const t=$("xt").value,f=$("xf").value,rows=t=="numbers"?N:O;
+function dl(name,mime,txt){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:typeof txt=="string"?mime+";charset=utf-8":mime}));a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+$("xgo").onclick=async()=>{const t=$("xt").value,f=$("xf").value,rows=t=="numbers"?N:O;
  if(!rows.length)return alert("Cədvəl boşdur");
  const cols=[...new Set(rows.flatMap(r=>Object.keys(r)))],nm=t+"_"+new Date().toISOString().slice(0,10);
  const cell=v=>v==null?"":(typeof v=="object"?JSON.stringify(v):String(v)).replace(/[\t\r\n]+/g," ");
- if(f=="xlsx"){if(window.XLSX){const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows,{header:cols}),t);XLSX.writeFile(wb,nm+".xlsx")}
-  else{const q=v=>'"'+cell(v).replace(/"/g,'""')+'"';dl(nm+".csv","text/csv","\ufeff"+[cols.map(q).join(","),...rows.map(r=>cols.map(c=>q(r[c])).join(","))].join("\r\n"));alert("Excel kitabxanası yüklənmədi, CSV fayl yükləndi (Excel-də açılır).")}}
- else if(f=="sql"){const v=x=>x==null?"NULL":typeof x=="number"||typeof x=="boolean"?x:"'"+(typeof x=="object"?JSON.stringify(x):String(x)).replace(/'/g,"''")+"'";
-  dl(nm+".sql","application/sql","-- "+t+" ("+rows.length+" sətir)\n"+rows.map(r=>"INSERT INTO "+t+" ("+cols.join(", ")+") VALUES ("+cols.map(c=>v(r[c])).join(", ")+");").join("\n")+"\n")}
- else dl(nm+".txt","text/plain",[cols.join("\t"),...rows.map(r=>cols.map(c=>cell(r[c])).join("\t"))].join("\n")+"\n");
+ const csv=()=>{const q=v=>{let s=cell(v);if(/^0\d+$/.test(s))s='="'+s+'"';return '"'+s.replace(/"/g,'""')+'"'};dl(nm+".csv","text/csv","\ufeff"+[cols.map(q).join(";"),...rows.map(r=>cols.map(c=>q(r[c])).join(";"))].join("\r\n"))};
+ if(f=="csv")csv();
+ else if(f=="xlsx"){if(window.XLSX){const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows,{header:cols}),t);XLSX.writeFile(wb,nm+".xlsx")}
+  else{csv();alert("Excel kitabxanası yüklənmədi, CSV fayl yükləndi (Excel-də açılır).")}}
+ else if(f=="db"){try{const SQL=await initSqlJs({locateFile:x=>"https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/"+x}),sq=new SQL.Database(),
+  ty=c=>{const r=rows.find(r=>r[c]!=null),x=r&&r[c];return typeof x=="number"?(Number.isInteger(x)?"INTEGER":"REAL"):typeof x=="boolean"?"INTEGER":"TEXT"};
+  sq.run('CREATE TABLE "'+t+'" ('+cols.map(c=>'"'+c+'" '+ty(c)+(c=="id"&&ty(c)=="INTEGER"?" PRIMARY KEY":"")).join(", ")+")");
+  const st=sq.prepare('INSERT INTO "'+t+'" VALUES ('+cols.map(()=>"?").join(",")+")");
+  rows.forEach(r=>st.run(cols.map(c=>{const x=r[c];return x==null?null:typeof x=="boolean"?+x:typeof x=="object"?JSON.stringify(x):x})));st.free();
+  dl(nm+".db","application/x-sqlite3",sq.export());sq.close()}catch(err){return alert("DB faylı yaradılmadı: "+(err.message||err)+". İnternet bağlantısını yoxlayın.")}}
  $("xm").classList.remove("on")};
 check();
 </script></body></html>
