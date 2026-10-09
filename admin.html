@@ -45,7 +45,8 @@ const price=id=>{const v=prompt("Yeni qiymət (₼):");if(v&&!isNaN(v))run(db.fr
 const del=id=>confirm("Nömrə silinsin?")&&run(db.from("numbers").delete().eq("id",id));
 const ost=(id,s)=>run(db.from("orders").update({status:s}).eq("id",id));
 const odel=id=>confirm("Sifariş silinsin?")&&run(db.from("orders").delete().eq("id",id));
-$("af").onsubmit=e=>{e.preventDefault();run(db.from("numbers").insert({phone:$("p").value,operator:$("op").value,category:$("ct").value,price:+$("pr").value}));e.target.reset()};
+$("af").onsubmit=e=>{e.preventDefault();run(db.from("numbers").insert({phone:$("p").value,operator:$("op").value,category:$("ct").value,price:+$("pr").value}));e.target.reset();$("ct").value="Bürünc"};
+$("pr").oninput=()=>{$("ct").value=catByPrice($("pr").value)};$("ct").value="Bürünc";
 $("q").oninput=draw;$("qb").onclick=draw;$("q").onkeydown=e=>{if(e.key=="Enter")draw()};
 let S=new Set();
 const vis=()=>{const q=$("q").value.replace(/\D/g,"");return N.filter(x=>!q||x.phone.includes(q))};
@@ -55,16 +56,12 @@ const pickAll=on=>{vis().forEach(x=>on?S.add(x.id):S.delete(x.id));draw()};
 $("bd").onclick=()=>{const ids=[...S];if(!ids.length)return alert("Əvvəlcə silinəcək nömrələrin yanındakı qutuları işarələyin");if(confirm(ids.length+" nömrə silinsin?")){S.clear();run(db.from("numbers").delete().in("id",ids))}};
 const PH=/(0\d{2})[\s\-.–]*(\d{3})[\s\-.–]*(\d{2})[\s\-.–]*(\d{2})/g;
 const OPS={"050":"Azercell","051":"Azercell","010":"Azercell","055":"Bakcell","099":"Bakcell","070":"Nar","077":"Nar"},OPL=["Azercell","Bakcell","Nar"],CATS=["VIP","Qızıl","Gümüş","Bürünc"];
-const guess=p=>{const d=p.slice(3),seq=(s,a)=>{for(let i=1;i<s.length;i++)if(+s[i]-+s[i-1]!=a)return false;return true};
- if(/(\d)\1{4}$/.test(d)||d==[...d].reverse().join("")||seq(d.slice(1),1)||seq(d.slice(1),-1))return"VIP";
- if(/(\d)\1{3}$/.test(d)||/(\d\d)\1$/.test(d)||/(\d)(\d)\2\1$/.test(d)||seq(d.slice(3),1)||seq(d.slice(3),-1))return"Qızıl";
- if(/(\d)\1\1$/.test(d)||/(\d)\1(\d)\2$/.test(d)||/00$/.test(d)||seq(d.slice(4),1)||seq(d.slice(4),-1))return"Gümüş";
- return"Bürünc"};
+const catByPrice=v=>{const p=parseFloat(v);return isNaN(p)||p<=50?"Bürünc":p<=100?"Gümüş":p<=300?"Qızıl":"VIP"};
 function parse(text){const out=[],fix=(v,a)=>a.find(x=>x.toLowerCase()==v.toLowerCase());
  text.replace(/(^|[^\d])\+?\s*994[\s\-.]*(?=\d{2})/g,"$10").split(/\n+/).forEach(line=>{const ms=[...line.matchAll(PH)];
   ms.forEach((m,i)=>{const end=m.index+m[0].length,rest=line.slice(end,ms[i+1]?ms[i+1].index:line.length),ph=m[1]+m[2]+m[3]+m[4],
    pm=rest.match(/\d{1,5}/),cm=rest.match(/vip|qızıl|gümüş|bürünc/i),om=rest.match(/azercell|bakcell|nar/i);
-   out.push({ph,op:om?fix(om[0],OPL):(OPS[ph.slice(0,3)]||""),cat:cm?fix(cm[0],CATS):guess(ph),pr:pm?+pm[0]:"",on:!!pm})})});
+   out.push({ph,op:om?fix(om[0],OPL):(OPS[ph.slice(0,3)]||""),cat:cm?fix(cm[0],CATS):catByPrice(pm?pm[0]:""),pr:pm?+pm[0]:"",on:!!pm})})});
  const seen=new Set();return out.filter(r=>!seen.has(r.ph)&&seen.add(r.ph))}
 let R=[];
 const optS=(v,a)=>a.map(x=>`<option value="${x}" ${x==v?"selected":""}>${x||"—"}</option>`).join("");
@@ -72,7 +69,7 @@ const rvCount=()=>{$("rvs").textContent=R.filter(r=>r.on).length+" / "+R.length+
 function rvOpen(m){$("rv").classList.add("on");$("rt").innerHTML="";$("rvs").textContent=m;$("rvok").disabled=true}
 const rvClose=()=>$("rv").classList.remove("on");
 function rvDraw(){const ex=new Set(N.map(x=>x.phone));
- $("rt").innerHTML="<tr><th><th>Nömrə<th>Operator<th>Kateqoriya<th>Qiymət ₼<th></tr>"+R.map((r,i)=>`<tr><td><input type="checkbox" ${r.on?"checked":""} onchange="R[${i}].on=this.checked;rvCount()"><td><input value="${r.ph}" maxlength="10" inputmode="numeric" style="width:130px" onchange="R[${i}].ph=this.value.replace(/\\D/g,'');rvDraw()">${ex.has(r.ph)?' <span class="tag">mövcuddur</span>':""}<td><select onchange="R[${i}].op=this.value">${optS(r.op,["",...OPL])}</select><td><select onchange="R[${i}].cat=this.value">${optS(r.cat,CATS)}</select><td><input type="number" min="0" value="${r.pr}" style="width:90px" onchange="R[${i}].pr=this.value"><td><button class="red" onclick="R.splice(${i},1);rvDraw()">✕</button></tr>`).join("");
+ $("rt").innerHTML="<tr><th><th>Nömrə<th>Operator<th>Kateqoriya<th>Qiymət ₼<th></tr>"+R.map((r,i)=>`<tr><td><input type="checkbox" ${r.on?"checked":""} onchange="R[${i}].on=this.checked;rvCount()"><td><input value="${r.ph}" maxlength="10" inputmode="numeric" style="width:130px" onchange="R[${i}].ph=this.value.replace(/\\D/g,'');rvDraw()">${ex.has(r.ph)?' <span class="tag">mövcuddur</span>':""}<td><select onchange="R[${i}].op=this.value">${optS(r.op,["",...OPL])}</select><td><select onchange="R[${i}].cat=this.value">${optS(r.cat,CATS)}</select><td><input type="number" min="0" value="${r.pr}" style="width:90px" onchange="R[${i}].pr=this.value;R[${i}].cat=catByPrice(this.value);rvDraw()"><td><button class="red" onclick="R.splice(${i},1);rvDraw()">✕</button></tr>`).join("");
  rvCount();$("rvok").disabled=!R.length}
 $("rvok").onclick=()=>{const sel=R.filter(r=>r.on);if(!sel.length)return alert("Heç nə seçilməyib");
  const bad=sel.find(r=>!/^0\d{9}$/.test(r.ph)||!OPL.includes(r.op)||r.pr===""||isNaN(+r.pr));
