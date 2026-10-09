@@ -1,4 +1,26 @@
-<!DOCTYPE html><html lang="az"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin</title><link rel="stylesheet" href="style.css"><style>.rvbox{max-width:860px;max-height:92vh;overflow:auto}.modal{z-index:50}#q{flex:1;min-width:160px}#rt input[type=checkbox]{width:20px;height:20px}#rt input,#rt select{padding:7px 8px}.sm{color:var(--mut);font-size:.9rem}</style></head><body>
+<!DOCTYPE html><html lang="az"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin</title><link rel="stylesheet" href="style.css"><style>.rvbox{max-width:860px;max-height:92vh;overflow:auto}.modal{z-index:50}#q{flex:1;min-width:160px}#rt input[type=checkbox]{width:20px;height:20px}#rt input,#rt select{padding:7px 8px}.sm{color:var(--mut);font-size:.9rem}
+#af>*{min-width:0;width:100%}
+#nt select{padding:6px 6px;font-size:.8rem;max-width:100%}
+@media(max-width:700px){
+#af{grid-template-columns:1fr 1fr;gap:8px}
+#af #p{grid-column:1/-1}
+#af select,#af input,#af button{padding:11px 8px;font-size:.92rem}
+#nt{min-width:0;display:block;width:100%}
+#nt tbody{display:block}
+#nt tr{display:grid;grid-template-columns:28px 1fr auto auto;gap:6px 8px;align-items:center;padding:10px 2px;border-bottom:1px solid var(--line)}
+#nt td,#nt th{border:0;padding:0;min-width:0;font-size:.85rem}
+#nt tr:first-child th:nth-child(n+3){display:none}
+#nt tr:first-child{padding:8px 2px}
+#nt td:nth-child(1){grid-column:1;grid-row:1}
+#nt td:nth-child(2){grid-column:2;grid-row:1;font-size:1rem;font-weight:700;white-space:nowrap}
+#nt td:nth-child(5){grid-column:3;grid-row:1;justify-self:end;white-space:nowrap}
+#nt td:nth-child(7){grid-column:4;grid-row:1;justify-self:end}
+#nt td:nth-child(3){grid-column:2;grid-row:2;color:var(--mut)}
+#nt td:nth-child(4){grid-column:3;grid-row:2;white-space:nowrap}
+#nt td:nth-child(6){grid-column:4;grid-row:2;justify-self:end}
+#nt button.red{padding:6px 10px;font-size:.8rem}
+}
+</style></head><body>
 <div class="wrap">
 <header><div class="logo">ASTELECOM · Admin</div><button class="ghost" id="out" style="display:none">Çıxış</button></header>
 <form id="lg" class="box" style="margin:60px auto"><h3>Giriş</h3><input id="em" type="email" placeholder="Email" required><input id="pw" type="password" placeholder="Şifrə" required><button>Daxil ol</button></form>
