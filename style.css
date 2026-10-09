@@ -149,3 +149,14 @@ button:active,.cbtn:active{transform:scale(.94);filter:brightness(1.15)}
 .prices input{width:100%;min-width:0;padding:11px 8px;text-align:center;font-size:.92rem}
 
 .fl2{margin-top:12px}
+
+/* Daha çox yüklə + Son axtarışlar */
+.more{text-align:center;margin:18px 0 10px}
+.more button{width:100%;max-width:340px;padding:13px;font-size:1.02rem}
+.hist{margin:-8px 0 20px}
+.hh{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;color:var(--mut);font-size:.9rem}
+.hx{background:transparent;border:0;color:var(--gold);font-weight:600;padding:4px 6px;font-size:.9rem}
+.hc{display:flex;flex-wrap:wrap;gap:8px}
+.hc button{background:#1d1c36;border:1px solid var(--line);color:var(--txt);font-weight:500;font-size:.82rem;padding:7px 12px;border-radius:99px;text-align:left;max-width:100%}
+
+.contact h2{margin-bottom:4px}
