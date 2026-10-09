@@ -128,3 +128,7 @@ button:active,.cbtn:active{transform:scale(.94);filter:brightness(1.15)}
 /* Yeni nişanı: ürəyin solunda, yanıb-sönən qırmızı */
 .card .new{position:absolute;top:12px;right:46px;background:#e0334a;color:#fff;font-size:.72rem;font-weight:800;padding:3px 9px;border-radius:99px;animation:blink 1s ease-in-out infinite}
 @keyframes blink{0%,100%{opacity:1;box-shadow:0 0 0 0 #e0334a99}50%{opacity:.35;box-shadow:0 0 0 6px #e0334a00}}
+
+/* Quşlu seçimdə toxunduqda çərçivə olmasın */
+.ck,.ck input,.og{-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+.ck:focus,.ck:focus-within,.ck input:focus,.ck input:focus-visible,.ck input:active{outline:none!important;box-shadow:none!important}

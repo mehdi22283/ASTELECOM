@@ -17,7 +17,7 @@
 <div class="bar"><span id="cnt"></span><div class="barr"><button id="fv" class="fvb">♡ Sevimlilər</button><select id="so" aria-label="Sıralama"><option value="asc">Qiymət: ucuzdan bahaya</option><option value="desc">Qiymət: bahadan ucuza</option></select></div></div>
 <div id="list" class="grid"></div>
 </div>
-<div class="modal" id="opm"><div class="box"><button type="button" class="xbtn" id="opx" aria-label="Bağla">✕</button><h3>Operator seçimi</h3><p class="hint" style="margin:0">Quş qoymaqla bir neçə operator və ya prefiks seçə bilərsiniz. Heç nə seçilməsə, bütün operatorlar göstərilir.</p><div class="og"><label class="ck op"><input type="checkbox" value="op:Azercell"> Bütün Azercell</label><div class="pfs"><label class="ck"><input type="checkbox" value="050"> 050</label><label class="ck"><input type="checkbox" value="051"> 051</label><label class="ck"><input type="checkbox" value="010"> 010</label></div></div><div class="og"><label class="ck op"><input type="checkbox" value="op:Bakcell"> Bütün Bakcell</label><div class="pfs"><label class="ck"><input type="checkbox" value="055"> 055</label><label class="ck"><input type="checkbox" value="099"> 099</label></div></div><div class="og"><label class="ck op"><input type="checkbox" value="op:Nar"> Bütün Nar</label><div class="pfs"><label class="ck"><input type="checkbox" value="070"> 070</label><label class="ck"><input type="checkbox" value="077"> 077</label></div></div><div class="acts"><button type="button" class="clr" id="opr">Sıfırla</button><button type="button" class="gold" id="opa">Tətbiq et</button></div></div></div>
+<div class="modal" id="opm"><div class="box"><button type="button" class="xbtn" id="opx" aria-label="Bağla">✕</button><h3>Operator seçimi</h3><p class="hint" style="margin:0">Hamısı seçilib. Lazım olmayan operator və ya prefiksin quşunu götürə bilərsiniz.</p><div class="og"><label class="ck op"><input type="checkbox" value="op:Azercell"> Bütün Azercell</label><div class="pfs"><label class="ck"><input type="checkbox" value="050"> 050</label><label class="ck"><input type="checkbox" value="051"> 051</label><label class="ck"><input type="checkbox" value="010"> 010</label></div></div><div class="og"><label class="ck op"><input type="checkbox" value="op:Bakcell"> Bütün Bakcell</label><div class="pfs"><label class="ck"><input type="checkbox" value="055"> 055</label><label class="ck"><input type="checkbox" value="099"> 099</label></div></div><div class="og"><label class="ck op"><input type="checkbox" value="op:Nar"> Bütün Nar</label><div class="pfs"><label class="ck"><input type="checkbox" value="070"> 070</label><label class="ck"><input type="checkbox" value="077"> 077</label></div></div><div class="acts"><button type="button" class="clr" id="opr">Sıfırla</button><button type="button" class="gold" id="opa">Tətbiq et</button></div></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="config.js"></script>
 <script>
@@ -25,7 +25,15 @@ const WA='<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" ar
 const LOGO={Azercell:'https://thumb.wikimedia.org/wikipedia/az/thumb/b/bf/Azercell_loqosu.svg/960px-Azercell_loqosu.svg.png?utm_source=az.wikipedia.org&amp;utm_campaign=index&amp;utm_content=thumbnail',Bakcell:'https://upload.wikimedia.org/wikipedia/commons/0/06/Bakcell-logo.png?utm_source=az.wikipedia.org&amp;utm_campaign=index&amp;utm_content=original',Nar:'https://upload.wikimedia.org/wikipedia/commons/f/f7/Nar-new-logo.png?utm_source=az.wikipedia.org&amp;utm_campaign=index&amp;utm_content=original'};
 const olg=o=>LOGO[o]?`<span class="olg"><img src="${LOGO[o]}" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='${o.toLowerCase()}.png'" alt="${esc(o)}"></span>`:'';
 const $=id=>document.getElementById(id);let all=[];const IC={VIP:"👑",Qızıl:"🥇",Gümüş:"🥈",Bürünc:"🥉"};
-let fv=new Set(),onlyFav=false,sel=new Set();const opm=$("opm"),lab=()=>{$("opb").textContent=sel.size?[...sel].map(t=>t.replace("op:","")).join(", "):"Bütün operatorlar"},uncheck=()=>opm.querySelectorAll("input").forEach(i=>i.checked=false);try{fv=new Set(JSON.parse(localStorage.getItem("fav")||"[]"))}catch(e){}
+let fv=new Set(),onlyFav=false,sel=new Set();const opm=$("opm"),OI=()=>[...opm.querySelectorAll("input")],
+lab=()=>{let t="Bütün operatorlar";if(sel.size){const P=[];opm.querySelectorAll(".og").forEach(g=>{const o=g.querySelector(".op input");if(sel.has(o.value))P.push(o.value.slice(3));else g.querySelectorAll(".pfs input").forEach(i=>sel.has(i.value)&&P.push(i.value))});if(P.length)t=P.join(", ")}$("opb").textContent=t},
+syncAll=()=>opm.querySelectorAll(".og").forEach(g=>{const o=g.querySelector(".op input"),p=[...g.querySelectorAll(".pfs input")];if(o.checked)p.forEach(i=>i.checked=true);else o.checked=p.every(i=>i.checked)}),
+setBoxes=()=>{OI().forEach(i=>i.checked=!sel.size||sel.has(i.value));syncAll()},
+pick=()=>{const c=OI().filter(i=>i.checked).map(i=>i.value);sel=(!c.length||c.length==OI().length)?new Set():new Set(c);lab()},
+checkAll=()=>OI().forEach(i=>i.checked=true);
+opm.querySelectorAll(".og").forEach(g=>{const o=g.querySelector(".op input"),p=[...g.querySelectorAll(".pfs input")];o.onchange=()=>p.forEach(i=>i.checked=o.checked);p.forEach(i=>i.onchange=()=>{o.checked=p.every(x=>x.checked)})});
+setBoxes();
+try{fv=new Set(JSON.parse(localStorage.getItem("fav")||"[]"))}catch(e){}
 const fav=id=>{fv.has(id)?fv.delete(id):fv.add(id);try{localStorage.setItem("fav",JSON.stringify([...fv]))}catch(e){}render()};
 const hl=(p,on)=>{const s=fmt(p);if(!on)return s;const D=(s.match(/\d/g)||[]).length,S=[4,5,8,9].map(i=>i+D-10);let n=-1;return[...s].map(c=>/\d/.test(c)?(n++,S.includes(n)?`<span class="hl">${c}</span>`:c):c).join("")};
 const boxes=()=>[...document.querySelectorAll(".pat input")];
@@ -42,19 +50,19 @@ boxes().forEach((el,i,a)=>{
  el.onfocus=()=>el.select()});
 [$("mn"),$("mx")].forEach(el=>{el.oninput=()=>{el.value=el.value.replace(/\D/g,"").slice(0,6)};el.onkeydown=e=>{if(e.key=="Enter")render()}});
 $("go").onclick=render;
-$("opb").onclick=()=>opm.classList.add("on");
+$("opb").onclick=()=>{setBoxes();opm.classList.add("on")};
 opm.onclick=e=>{if(e.target==opm)opm.classList.remove("on")};
 document.addEventListener("keydown",e=>{if(e.key=="Escape")opm.classList.remove("on")});
-$("opr").onclick=uncheck;$("opx").onclick=()=>opm.classList.remove("on");
-$("opa").onclick=()=>{sel=new Set([...opm.querySelectorAll("input:checked")].map(i=>i.value));lab();opm.classList.remove("on");render()};
+$("opr").onclick=checkAll;$("opx").onclick=()=>opm.classList.remove("on");
+$("opa").onclick=()=>{pick();opm.classList.remove("on");render()};
 $("so").onchange=render;$("fv").onclick=()=>{onlyFav=!onlyFav;$("fv").classList.toggle("on",onlyFav);$("fv").textContent=(onlyFav?"♥":"♡")+" Sevimlilər";render()};
-$("clr").onclick=e=>{sel.clear();uncheck();lab();boxes().forEach(i=>i.value="");$("cat").value=$("pair").value=$("mn").value=$("mx").value="";render()};
+$("clr").onclick=e=>{sel.clear();checkAll();lab();boxes().forEach(i=>i.value="");$("cat").value=$("pair").value=$("mn").value=$("mx").value="";render()};
 $("cw").href="https://wa.me/"+WHATSAPP;$("cp").href="tel:+"+WHATSAPP;
 let newIds=new Set();
 const isNew=x=>x.created_at?Date.now()-Date.parse(x.created_at)<6048e5:newIds.has(x.id);
 function mark(){try{const raw=localStorage.getItem("seen"),old=new Set(JSON.parse(raw||"[]"));newIds=raw?new Set(all.filter(x=>!old.has(x.id)).map(x=>x.id)):new Set();localStorage.setItem("seen",JSON.stringify(all.map(x=>x.id)))}catch(e){}}
 function sv(){try{localStorage.setItem("flt",JSON.stringify({sel:[...sel],ct:$("cat").value,pr:$("pair").value,so:$("so").value,mn:$("mn").value,mx:$("mx").value,dg:boxes().map(i=>i.value),fav:onlyFav}))}catch(e){}}
-try{const s=JSON.parse(localStorage.getItem("flt")||"null");if(s){sel=new Set(s.sel||(s.pf?[s.pf]:[]));opm.querySelectorAll("input").forEach(i=>i.checked=sel.has(i.value));$("cat").value=s.ct||"";$("pair").value=s.pr||"";$("so").value=s.so||"asc";$("mn").value=s.mn||"";$("mx").value=s.mx||"";boxes().forEach((el,i)=>el.value=(s.dg||[])[i]||"");onlyFav=!!s.fav;$("fv").classList.toggle("on",onlyFav);$("fv").textContent=(onlyFav?"♥":"♡")+" Sevimlilər";lab()}}catch(e){}
+try{const s=JSON.parse(localStorage.getItem("flt")||"null");if(s){sel=new Set(s.sel||(s.pf?[s.pf]:[]));setBoxes();pick();$("cat").value=s.ct||"";$("pair").value=s.pr||"";$("so").value=s.so||"asc";$("mn").value=s.mn||"";$("mx").value=s.mx||"";boxes().forEach((el,i)=>el.value=(s.dg||[])[i]||"");onlyFav=!!s.fav;$("fv").classList.toggle("on",onlyFav);$("fv").textContent=(onlyFav?"♥":"♡")+" Sevimlilər";lab()}}catch(e){}
 if("serviceWorker" in navigator&&location.protocol!="file:")addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
 load();
 </script></body></html>
