@@ -124,3 +124,18 @@ button,.cbtn{transition:transform .12s ease,filter .12s ease,box-shadow .12s eas
 button:active,.cbtn:active{transform:scale(.94);filter:brightness(1.15)}
 .card .fav:active{transform:scale(1.35)}
 .xbtn:active{transform:scale(.88) rotate(90deg)}
+
+/* Yeni nişanı: ürəyin solunda, yanıb-sönən qırmızı */
+.card .new{position:absolute;top:12px;right:46px;background:#e0334a;color:#fff;font-size:.72rem;font-weight:800;padding:3px 9px;border-radius:99px;animation:blink 1s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1;box-shadow:0 0 0 0 #e0334a99}50%{opacity:.35;box-shadow:0 0 0 6px #e0334a00}}
+
+/* Yuxarı qayıt düyməsi */
+.up{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));width:50px;height:50px;padding:0;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#f3d68a,#c99a2e);color:#1a1405;box-shadow:0 4px 14px #0009;opacity:0;visibility:hidden;transition:opacity .2s,visibility .2s,transform .12s;z-index:40}
+.up.on{opacity:1;visibility:visible}
+
+/* Tətbiq yükləmə bannerı */
+.ins{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));display:none;align-items:center;gap:10px;padding:12px 14px;background:var(--card);border:1px solid var(--gold);border-radius:14px;box-shadow:0 6px 20px #000a;z-index:60;max-width:460px;margin:auto}
+.ins.on{display:flex}
+.ins span{flex:1;font-size:.9rem;color:var(--txt)}
+.ins .gold{padding:9px 14px}
+.inx{width:30px;height:30px;padding:0;border-radius:50%;background:#2f2d5c;color:#fff;font-size:.85rem;display:flex;align-items:center;justify-content:center;flex:none}
