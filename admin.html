@@ -1,5 +1,6 @@
 <!DOCTYPE html><html lang="az"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin</title><link rel="stylesheet" href="style.css"><style>.rvbox{max-width:860px;max-height:92vh;overflow:auto}.modal{z-index:50}#q{flex:1;min-width:160px}#rt input[type=checkbox]{width:20px;height:20px}#rt input,#rt select{padding:7px 8px}.sm{color:var(--mut);font-size:.9rem}
-.ph,.pz{font-size:1.5em}
+.ph,.pz{font-size:1.5em;white-space:nowrap}
+#nt button.ghost,#rzt button.ghost{padding:5px 10px;font-size:.8rem;margin-left:6px;vertical-align:middle}
 #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#c0392b;color:#fff;padding:12px 18px;border-radius:10px;z-index:100;max-width:90vw;font-weight:600;text-align:center;opacity:0;pointer-events:none;transition:opacity .25s}#toast.on{opacity:1}
 #af>*{min-width:0;width:100%}
 #nt select{padding:6px 6px;font-size:.8rem;max-width:100%}
@@ -72,15 +73,15 @@ async function load(){const[n,o]=await Promise.all([db.from("numbers").select("*
 function draw(){const c=s=>N.filter(x=>x.status==s).length;
  $("st").innerHTML=[["Aktiv",c("aktiv")],["Rezerv",c("rezerv")],["Satılıb",c("satılıb")],["Yeni sifariş",O.filter(x=>x.status=="yeni").length]].map(a=>`<div class="stat"><b>${a[1]}</b>${a[0]}</div>`).join("");
  const sel=(v,a)=>a.map(x=>`<option ${x==v?"selected":""}>${x}</option>`).join("");
- pruneS();const V=vis();$("nt").innerHTML="<tr><th><input type=\"checkbox\" aria-label=\"Hamısını seç\" "+(V.length&&V.every(x=>S.has(x.id))?"checked":"")+" onchange=\"pickAll(this.checked)\"><th>Nömrə<th>Operator<th>Kateqoriya<th>Qiymət<th>Status<th></tr>"+V.map(x=>`<tr><td><input type="checkbox" ${S.has(x.id)?"checked":""} onchange="pick(${x.id},this.checked)"><td><span class="ph">${fmt(x.phone)}</span><td>${esc(x.operator)}<td>${IC[x.category]||""} ${esc(x.category)}<td><a class="pz" href="#" onclick="price(${x.id});return false">${esc(x.price)} ₼ ✎</a><td><select onchange="upd(${x.id},this.value)">${sel(x.status,["aktiv","rezerv","satılıb"])}</select><td><button class="red" onclick="del(${x.id})">Sil</button></tr>`).join("");
+ pruneS();const V=vis();$("nt").innerHTML="<tr><th><input type=\"checkbox\" aria-label=\"Hamısını seç\" "+(V.length&&V.every(x=>S.has(x.id))?"checked":"")+" onchange=\"pickAll(this.checked)\"><th>Nömrə<th>Operator<th>Kateqoriya<th>Qiymət<th>Status<th></tr>"+V.map(x=>`<tr><td><input type="checkbox" ${S.has(x.id)?"checked":""} onchange="pick(${x.id},this.checked)"><td><span class="ph">${fmt(x.phone)}</span><td>${esc(x.operator)}<td>${IC[x.category]||""} ${esc(x.category)}<td><span class="pz">${esc(x.price)} ₼</span><button class="ghost" onclick="price(${x.id})">Dəyiş</button><td><select onchange="upd(${x.id},this.value)">${sel(x.status,["aktiv","rezerv","satılıb"])}</select><td><button class="red" onclick="del(${x.id})">Sil</button></tr>`).join("");
  const n=S.size;$("bd").style.opacity=n?1:.6;$("bd").textContent="🗑 Sil ("+n+")";
  $("ot").innerHTML="<tr><th>Tarix<th>Nömrə<th>Ad<th>Əlaqə<th>Qeyd<th>Status<th></tr>"+O.map(x=>`<tr><td>${new Date(x.created_at).toLocaleString("az")}<td><span class="ph">${fmt(x.phone)}</span><td>${esc(x.name)}<td>${esc(x.contact)}<td>${esc(x.note)}<td><select onchange="ost(${x.id},this.value)">${sel(x.status,["yeni","əlaqə saxlanıldı","tamamlandı"])}</select><td><button class="red" onclick="odel(${x.id})">Sil</button></tr>`).join("");
  const RZ=N.filter(x=>x.status=="rezerv");$("tbr").textContent="Rezerv ("+RZ.length+")";
- $("rzt").innerHTML="<tr><th>Nömrə<th>Operator<th>Kateqoriya<th>Qiymət<th>Status</tr>"+(RZ.length?RZ.map(x=>`<tr><td><span class="ph">${fmt(x.phone)}</span><td>${esc(x.operator)}<td>${IC[x.category]||""} ${esc(x.category)}<td><span class="pz">${esc(x.price)} ₼</span><td><select onchange="upd(${x.id},this.value)">${sel(x.status,["aktiv","rezerv","satılıb"])}</select></tr>`).join(""):'<tr><td colspan="5" class="sm">Rezerv olunmuş nömrə yoxdur</tr>')}
+ $("rzt").innerHTML="<tr><th>Nömrə<th>Operator<th>Kateqoriya<th>Qiymət<th>Status</tr>"+(RZ.length?RZ.map(x=>`<tr><td><span class="ph">${fmt(x.phone)}</span><td>${esc(x.operator)}<td>${IC[x.category]||""} ${esc(x.category)}<td><span class="pz">${esc(x.price)} ₼</span><button class="ghost" onclick="price(${x.id})">Dəyiş</button><td><select onchange="upd(${x.id},this.value)">${sel(x.status,["aktiv","rezerv","satılıb"])}</select></tr>`).join(""):'<tr><td colspan="5" class="sm">Rezerv olunmuş nömrə yoxdur</tr>')}
 let tt;const toast=m=>{const t=$("toast");t.textContent=m;t.classList.add("on");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("on"),3500)};
 const run=async p=>{const{error}=await p;if(error)alert(error.message);load()};
 const upd=(id,s)=>run(db.from("numbers").update({status:s}).eq("id",id));
-const price=id=>{const v=prompt("Yeni qiymət (₼):");if(v&&!isNaN(v))run(db.from("numbers").update({price:+v}).eq("id",id))};
+const price=id=>{const x=N.find(r=>r.id==id),v=prompt("Yeni qiymət (₼):",x?x.price:"");if(v&&!isNaN(v))run(db.from("numbers").update({price:+v,category:catByPrice(v)}).eq("id",id))};
 const del=id=>confirm("Nömrə silinsin?")&&run(db.from("numbers").delete().eq("id",id));
 const ost=(id,s)=>run(db.from("orders").update({status:s}).eq("id",id));
 const odel=id=>confirm("Sifariş silinsin?")&&run(db.from("orders").delete().eq("id",id));
