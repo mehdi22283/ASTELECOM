@@ -29,13 +29,13 @@
 <div class="row"><button id="tbn" onclick="tab('n')">Nömrələr</button><button id="tbo" class="ghost" onclick="tab('o')">Sifarişlər</button></div>
 <div id="tn">
 <form id="af" class="filters">
-<input id="p" placeholder="Nömrə: 0507777777" required pattern="\d{10}" maxlength="10" inputmode="numeric" autocomplete="off" oninput="this.value=this.value.replace(/\D/g,'').slice(0,10)">
+<input id="p" type="tel" placeholder="Nömrə: 0507777777" required pattern="\d{10}" maxlength="10" inputmode="tel" autocomplete="off" oninput="this.value=this.value.replace(/\D/g,'').slice(0,10)">
 <select id="op"><option>Azercell</option><option>Bakcell</option><option>Nar</option></select>
 <select id="ct"><option value="VIP">👑 VIP</option><option value="Qızıl">🥇 Qızıl</option><option value="Gümüş">🥈 Gümüş</option><option value="Bürünc">🥉 Bürünc</option></select>
-<input id="pr" type="number" placeholder="Qiymət ₼" required min="0">
+<input id="pr" type="tel" inputmode="tel" maxlength="6" autocomplete="off" placeholder="Qiymət ₼" required>
 <button class="gold">Nömrə əlavə et</button>
 </form>
-<div class="row"><input id="q" inputmode="numeric" autocomplete="off" placeholder="Nömrə axtar"><button id="qb" class="gold">🔍 Axtar</button><button id="bb" class="ghost">➕ Toplu əlavə</button><button id="bd" class="red">🗑 Sil (0)</button><button id="ex" class="ghost">⬇ Export</button></div>
+<div class="row"><input id="q" type="tel" inputmode="tel" autocomplete="off" placeholder="Nömrə axtar"><button id="qb" class="gold">🔍 Axtar</button><button id="bb" class="ghost">➕ Toplu əlavə</button><button id="bd" class="red">🗑 Sil (0)</button><button id="ex" class="ghost">⬇ Export</button></div>
 <div class="contact" style="margin:0 0 16px"><h2>Sistemdə axtar</h2><div class="acts" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-top:12px"><a class="cbtn" style="background:#6d2fd1" target="_blank" rel="noopener" href="https://azercellim.com">Azərcelldə axtar</a><a class="cbtn" style="background:#00a651" target="_blank" rel="noopener" href="https://bakcell.com/number-sale">Bakcelldə axtar</a><a class="cbtn" style="background:#e4002b" target="_blank" rel="noopener" href="https://www.narsim.az/">Narda axtar</a></div></div>
 <div class="scroll"><table id="nt"></table></div></div>
 <div id="to" style="display:none"><div class="scroll"><table id="ot"></table></div></div>
@@ -68,7 +68,7 @@ const del=id=>confirm("Nömrə silinsin?")&&run(db.from("numbers").delete().eq("
 const ost=(id,s)=>run(db.from("orders").update({status:s}).eq("id",id));
 const odel=id=>confirm("Sifariş silinsin?")&&run(db.from("orders").delete().eq("id",id));
 $("af").onsubmit=e=>{e.preventDefault();run(db.from("numbers").insert({phone:$("p").value,operator:$("op").value,category:$("ct").value,price:+$("pr").value}));e.target.reset();$("ct").value="Bürünc"};
-$("pr").oninput=()=>{$("ct").value=catByPrice($("pr").value)};$("ct").value="Bürünc";
+$("pr").oninput=()=>{$("pr").value=$("pr").value.replace(/\D/g,"").slice(0,6);$("ct").value=catByPrice($("pr").value)};$("ct").value="Bürünc";
 $("q").oninput=draw;$("qb").onclick=draw;$("q").onkeydown=e=>{if(e.key=="Enter")draw()};
 let S=new Set();
 const vis=()=>{const q=$("q").value.replace(/\D/g,"");return N.filter(x=>!q||x.phone.includes(q))};
@@ -91,7 +91,7 @@ const rvCount=()=>{$("rvs").textContent=R.filter(r=>r.on).length+" / "+R.length+
 function rvOpen(m){$("rv").classList.add("on");$("rt").innerHTML="";$("rvs").textContent=m;$("rvok").disabled=true}
 const rvClose=()=>$("rv").classList.remove("on");
 function rvDraw(){const ex=new Set(N.map(x=>x.phone));
- $("rt").innerHTML="<tr><th><th>Nömrə<th>Operator<th>Kateqoriya<th>Qiymət ₼<th></tr>"+R.map((r,i)=>`<tr><td><input type="checkbox" ${r.on?"checked":""} onchange="R[${i}].on=this.checked;rvCount()"><td><input value="${r.ph}" maxlength="10" inputmode="numeric" style="width:130px" onchange="R[${i}].ph=this.value.replace(/\\D/g,'');rvDraw()">${ex.has(r.ph)?' <span class="tag">mövcuddur</span>':""}<td><select onchange="R[${i}].op=this.value">${optS(r.op,["",...OPL])}</select><td><select onchange="R[${i}].cat=this.value">${optS(r.cat,CATS)}</select><td><input type="number" min="0" value="${r.pr}" style="width:90px" onchange="R[${i}].pr=this.value;R[${i}].cat=catByPrice(this.value);rvDraw()"><td><button class="red" onclick="R.splice(${i},1);rvDraw()">✕</button></tr>`).join("");
+ $("rt").innerHTML="<tr><th><th>Nömrə<th>Operator<th>Kateqoriya<th>Qiymət ₼<th></tr>"+R.map((r,i)=>`<tr><td><input type="checkbox" ${r.on?"checked":""} onchange="R[${i}].on=this.checked;rvCount()"><td><input value="${r.ph}" maxlength="10" inputmode="numeric" style="width:130px" onchange="R[${i}].ph=this.value.replace(/\\D/g,'');rvDraw()">${ex.has(r.ph)?' <span class="tag">mövcuddur</span>':""}<td><select onchange="R[${i}].op=this.value">${optS(r.op,["",...OPL])}</select><td><select onchange="R[${i}].cat=this.value">${optS(r.cat,CATS)}</select><td><input type="tel" inputmode="tel" maxlength="6" value="${r.pr}" style="width:90px" oninput="this.value=this.value.replace(/\\D/g,'').slice(0,6)" onchange="R[${i}].pr=this.value;R[${i}].cat=catByPrice(this.value);rvDraw()"><td><button class="red" onclick="R.splice(${i},1);rvDraw()">✕</button></tr>`).join("");
  rvCount();$("rvok").disabled=!R.length}
 $("rvok").onclick=()=>{const sel=R.filter(r=>r.on);if(!sel.length)return alert("Heç nə seçilməyib");
  const bad=sel.find(r=>!/^0\d{9}$/.test(r.ph)||!OPL.includes(r.op)||r.pr===""||isNaN(+r.pr));
