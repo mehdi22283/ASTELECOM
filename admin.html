@@ -13,7 +13,8 @@
 <input id="pr" type="number" placeholder="Qiymət ₼" required min="0">
 <button class="gold">Nömrə əlavə et</button>
 </form>
-<div class="row"><input id="q" inputmode="numeric" autocomplete="off" placeholder="Nömrə axtar"><button id="qb" class="gold">🔍 Axtar</button><button id="bb" class="ghost">➕ Toplu əlavə</button><button id="sc" class="gold">📷 Fotodan skan</button><input type="file" id="fl" accept="image/*" hidden><button id="bd" class="red">🗑 Sil (0)</button><button id="ex" class="ghost">⬇ Export</button></div>
+<div class="row"><input id="q" inputmode="numeric" autocomplete="off" placeholder="Nömrə axtar"><button id="qb" class="gold">🔍 Axtar</button><button id="bb" class="ghost">➕ Toplu əlavə</button><button id="bd" class="red">🗑 Sil (0)</button><button id="ex" class="ghost">⬇ Export</button></div>
+<div class="contact" style="margin:0 0 16px"><h2>Sistemdə axtar</h2><div class="acts" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-top:12px"><a class="cbtn" style="background:#6d2fd1" target="_blank" rel="noopener" href="https://azercellim.com/az/search">Azərcelldə axtar</a><a class="cbtn" style="background:#00a651" target="_blank" rel="noopener" href="https://bakcell.com/number-sale">Bakcelldə axtar</a><a class="cbtn" style="background:#e4002b" target="_blank" rel="noopener" href="https://www.narsim.az/">Narda axtar</a></div></div>
 <div class="scroll"><table id="nt"></table></div></div>
 <div id="to" style="display:none"><div class="scroll"><table id="ot"></table></div></div>
 </div></div>
@@ -23,7 +24,6 @@
 <div class="modal" id="xm"><div class="box"><h3>Export</h3><label class="sm">Cədvəl</label><select id="xt"><option value="numbers">Nömrələr</option><option value="orders">Sifarişlər</option></select><label class="sm">Format</label><select id="xf"><option value="xlsx">Excel (.xlsx)</option><option value="csv">CSV (.csv) — cədvəl kimi açılır</option><option value="db">Verilənlər bazası (.db)</option></select><div class="row"><button class="ghost" onclick="$('xm').classList.remove('on')">Bağla</button><button class="gold" id="xgo">Yüklə</button></div></div></div>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/sql-wasm.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
 <script src="config.js"></script>
 <script>
 const $=id=>document.getElementById(id);let N=[],O=[];const IC={VIP:"👑",Qızıl:"🥇",Gümüş:"🥈",Bürünc:"🥉"};
@@ -61,7 +61,7 @@ const guess=p=>{const d=p.slice(3),seq=(s,a)=>{for(let i=1;i<s.length;i++)if(+s[
  if(/(\d)\1\1$/.test(d)||/(\d)\1(\d)\2$/.test(d)||/00$/.test(d)||seq(d.slice(4),1)||seq(d.slice(4),-1))return"Gümüş";
  return"Bürünc"};
 function parse(text){const out=[],fix=(v,a)=>a.find(x=>x.toLowerCase()==v.toLowerCase());
- text.split(/\n+/).forEach(line=>{const ms=[...line.matchAll(PH)];
+ text.replace(/(^|[^\d])\+?\s*994[\s\-.]*(?=\d{2})/g,"$10").split(/\n+/).forEach(line=>{const ms=[...line.matchAll(PH)];
   ms.forEach((m,i)=>{const end=m.index+m[0].length,rest=line.slice(end,ms[i+1]?ms[i+1].index:line.length),ph=m[1]+m[2]+m[3]+m[4],
    pm=rest.match(/\d{1,5}/),cm=rest.match(/vip|qızıl|gümüş|bürünc/i),om=rest.match(/azercell|bakcell|nar/i);
    out.push({ph,op:om?fix(om[0],OPL):(OPS[ph.slice(0,3)]||""),cat:cm?fix(cm[0],CATS):guess(ph),pr:pm?+pm[0]:"",on:!!pm})})});
@@ -81,25 +81,6 @@ $("rvok").onclick=()=>{const sel=R.filter(r=>r.on);if(!sel.length)return alert("
 $("bb").onclick=()=>$("bm").classList.add("on");
 function bulkRead(){const rows=parse($("bulk").value);if(!rows.length)return alert("Nömrə tapılmadı. Hər sətirdə nömrə və qiymət yazın.");
  $("bm").classList.remove("on");R=rows;rvOpen("");rvDraw();$("bulk").value=""}
-$("sc").onclick=()=>$("fl").click();
-$("fl").onchange=e=>{const f=e.target.files[0];e.target.value="";if(f)scan(f)};
-async function scan(f){rvOpen("Şəkil hazırlanır…");let w;
- try{const bm=await createImageBitmap(f),k=Math.min(3,Math.max(1,2000/bm.width)),c=document.createElement("canvas");c.width=Math.round(bm.width*k);c.height=Math.round(bm.height*k);
-  const g=c.getContext("2d",{willReadFrequently:true});g.drawImage(bm,0,0,c.width,c.height);const im=g.getImageData(0,0,c.width,c.height),d=im.data,L=new Uint8Array(d.length/4);let s=0;
-  for(let i=0;i<L.length;i++){L[i]=.299*d[i*4]+.587*d[i*4+1]+.114*d[i*4+2];s+=L[i]}
-  const dark=s/L.length<128;
-  for(let i=0;i<L.length;i++){const v=dark?(L[i]>150?0:255):(L[i]>128?255:0);d[i*4]=d[i*4+1]=d[i*4+2]=v;d[i*4+3]=255}
-  g.putImageData(im,0,0);
-  w=await Tesseract.createWorker("eng",1,{logger:m=>{if(m.status=="recognizing text")$("rvs").textContent="Oxunur… "+Math.round(m.progress*100)+"%"}});
-  await w.setParameters({tessedit_char_whitelist:"0123456789-. ",tessedit_pageseg_mode:"11"});
-  const{data}=await w.recognize(c);let text=data.text;
-  if(data.words&&data.words.length){const ws=data.words.filter(x=>x.text.trim()).map(x=>({t:x.text.trim(),y:(x.bbox.y0+x.bbox.y1)/2,h:x.bbox.y1-x.bbox.y0,x:x.bbox.x0})).sort((a,b)=>a.y-b.y),
-   hs=ws.map(x=>x.h).sort((a,b)=>a-b),mh=hs[hs.length>>1]||20,rows=[];
-   ws.forEach(x=>{const r=rows[rows.length-1];if(r&&x.y-r.y<mh*.6){r.w.push(x);r.y=(r.y*(r.w.length-1)+x.y)/r.w.length}else rows.push({y:x.y,w:[x]})});
-   text=rows.map(r=>r.w.sort((a,b)=>a.x-b.x).map(x=>x.t).join(" ")).join("\n")}
-  R=parse(text);if(!R.length)$("rvs").textContent="Nömrə tapılmadı. Daha aydın şəkillə yenidən cəhd edin.";else rvDraw()}
- catch(err){$("rvs").textContent="Şəkil oxunmadı: "+(err.message||err)+". İnternet bağlantısını yoxlayın."}
- finally{if(w)w.terminate()}}
 $("ex").onclick=()=>$("xm").classList.add("on");
 function dl(name,mime,txt){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:typeof txt=="string"?mime+";charset=utf-8":mime}));a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 $("xgo").onclick=async()=>{const t=$("xt").value,f=$("xf").value,rows=t=="numbers"?N:O;
