@@ -30,8 +30,6 @@
 <div id="tn">
 <form id="af" class="filters">
 <input id="p" type="tel" placeholder="Nömrə: 0507777777" required pattern="\d{10}" maxlength="10" inputmode="tel" autocomplete="off" oninput="this.value=this.value.replace(/\D/g,'').slice(0,10)">
-<select id="op"><option>Azercell</option><option>Bakcell</option><option>Nar</option></select>
-<select id="ct"><option value="VIP">👑 VIP</option><option value="Qızıl">🥇 Qızıl</option><option value="Gümüş">🥈 Gümüş</option><option value="Bürünc">🥉 Bürünc</option></select>
 <input id="pr" type="tel" inputmode="tel" maxlength="6" autocomplete="off" placeholder="Qiymət ₼" required>
 <button class="gold">Nömrə əlavə et</button>
 </form>
@@ -67,8 +65,8 @@ const price=id=>{const v=prompt("Yeni qiymət (₼):");if(v&&!isNaN(v))run(db.fr
 const del=id=>confirm("Nömrə silinsin?")&&run(db.from("numbers").delete().eq("id",id));
 const ost=(id,s)=>run(db.from("orders").update({status:s}).eq("id",id));
 const odel=id=>confirm("Sifariş silinsin?")&&run(db.from("orders").delete().eq("id",id));
-$("af").onsubmit=e=>{e.preventDefault();run(db.from("numbers").insert({phone:$("p").value,operator:$("op").value,category:$("ct").value,price:+$("pr").value}));e.target.reset();$("ct").value="Bürünc"};
-$("pr").oninput=()=>{$("pr").value=$("pr").value.replace(/\D/g,"").slice(0,6);$("ct").value=catByPrice($("pr").value)};$("ct").value="Bürünc";
+$("af").onsubmit=e=>{e.preventDefault();const ph=$("p").value,op=OPS[ph.slice(0,3)];if(!op)return alert("Prefiks tanınmadı ("+ph.slice(0,3)+"). Operator təyin edilə bilmədi.");run(db.from("numbers").insert({phone:ph,operator:op,category:catByPrice($("pr").value),price:+$("pr").value}));e.target.reset()};
+$("pr").oninput=()=>{$("pr").value=$("pr").value.replace(/\D/g,"").slice(0,6)};
 $("q").oninput=draw;$("qb").onclick=draw;$("q").onkeydown=e=>{if(e.key=="Enter")draw()};
 let S=new Set();
 const vis=()=>{const q=$("q").value.replace(/\D/g,"");return N.filter(x=>!q||x.phone.includes(q))};
