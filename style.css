@@ -107,3 +107,8 @@ input::placeholder{color:#a9a9c8}
 .box{position:relative}
 .box h3{padding-right:40px}
 .xbtn{position:absolute;top:12px;right:12px;width:34px;height:34px;padding:0;border-radius:50%;background:#e0334a;color:#fff;font-size:1rem;line-height:1;display:flex;align-items:center;justify-content:center}
+
+.filters{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.opb{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.25;overflow-wrap:anywhere;min-height:46px}
+
+.hl{color:#1a1405;background:linear-gradient(135deg,#f3d68a,#c99a2e);border-radius:4px;padding:0 2px;margin:0 -1px}
