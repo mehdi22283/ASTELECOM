@@ -4,7 +4,7 @@
 <form id="lg" class="box" style="margin:60px auto"><h3>Giriş</h3><input id="em" type="email" placeholder="Email" required><input id="pw" type="password" placeholder="Şifrə" required><button>Daxil ol</button></form>
 <div id="pn" style="display:none">
 <div class="stats" id="st"></div>
-<div class="row"><button onclick="tab('n')">Nömrələr</button><button class="ghost" onclick="tab('o')">Sifarişlər</button></div>
+<div class="row"><button id="tbn" onclick="tab('n')">Nömrələr</button><button id="tbo" class="ghost" onclick="tab('o')">Sifarişlər</button></div>
 <div id="tn">
 <form id="af" class="filters">
 <input id="p" placeholder="Nömrə: 0507777777" required pattern="\d{10}" inputmode="numeric">
@@ -31,7 +31,7 @@ async function check(){const{data:{session}}=await db.auth.getSession();
  $("lg").style.display=session?"none":"";$("pn").style.display=$("out").style.display=session?"":"none";if(session)load()}
 $("lg").onsubmit=async e=>{e.preventDefault();const{error}=await db.auth.signInWithPassword({email:$("em").value,password:$("pw").value});error?alert("Email və ya şifrə səhvdir"):check()};
 $("out").onclick=async()=>{await db.auth.signOut();check()};
-function tab(t){$("tn").style.display=t=="n"?"":"none";$("to").style.display=t=="o"?"":"none"}
+function tab(t){$("tbn").classList.toggle("ghost",t!="n");$("tbo").classList.toggle("ghost",t!="o");$("tn").style.display=t=="n"?"":"none";$("to").style.display=t=="o"?"":"none"}
 async function load(){const[n,o]=await Promise.all([db.from("numbers").select("*").order("id",{ascending:false}),db.from("orders").select("*").order("id",{ascending:false})]);N=n.data||[];O=o.data||[];draw()}
 function draw(){const c=s=>N.filter(x=>x.status==s).length;
  $("st").innerHTML=[["Aktiv",c("aktiv")],["Rezerv",c("rezerv")],["Satılıb",c("satılıb")],["Yeni sifariş",O.filter(x=>x.status=="yeni").length]].map(a=>`<div class="stat"><b>${a[1]}</b>${a[0]}</div>`).join("");
