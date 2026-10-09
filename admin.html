@@ -1,5 +1,6 @@
 <!DOCTYPE html><html lang="az"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin</title><link rel="stylesheet" href="style.css"><style>.rvbox{max-width:860px;max-height:92vh;overflow:auto}.modal{z-index:50}#q{flex:1;min-width:160px}#rt input[type=checkbox]{width:20px;height:20px}#rt input,#rt select{padding:7px 8px}.sm{color:var(--mut);font-size:.9rem}
 .ph,.pz{font-size:1.5em}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#c0392b;color:#fff;padding:12px 18px;border-radius:10px;z-index:100;max-width:90vw;font-weight:600;text-align:center;opacity:0;pointer-events:none;transition:opacity .25s}#toast.on{opacity:1}
 #af>*{min-width:0;width:100%}
 #nt select{padding:6px 6px;font-size:.8rem;max-width:100%}
 @media(max-width:700px){
@@ -58,6 +59,7 @@
 <div class="modal" id="xm"><div class="box"><h3>Export</h3><label class="sm">Cədvəl</label><select id="xt"><option value="numbers">Nömrələr</option><option value="orders">Sifarişlər</option></select><label class="sm">Format</label><select id="xf"><option value="xlsx">Excel (.xlsx)</option><option value="csv">CSV (.csv) — cədvəl kimi açılır</option><option value="db">Verilənlər bazası (.db)</option></select><div class="row"><button class="ghost" onclick="$('xm').classList.remove('on')">Bağla</button><button class="gold" id="xgo">Yüklə</button></div></div></div>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/sql-wasm.js"></script>
+<div id="toast"></div>
 <script src="config.js"></script>
 <script>
 const $=id=>document.getElementById(id);let N=[],O=[];const IC={VIP:"👑",Qızıl:"🥇",Gümüş:"🥈",Bürünc:"🥉"};
@@ -75,13 +77,14 @@ function draw(){const c=s=>N.filter(x=>x.status==s).length;
  $("ot").innerHTML="<tr><th>Tarix<th>Nömrə<th>Ad<th>Əlaqə<th>Qeyd<th>Status<th></tr>"+O.map(x=>`<tr><td>${new Date(x.created_at).toLocaleString("az")}<td><span class="ph">${fmt(x.phone)}</span><td>${esc(x.name)}<td>${esc(x.contact)}<td>${esc(x.note)}<td><select onchange="ost(${x.id},this.value)">${sel(x.status,["yeni","əlaqə saxlanıldı","tamamlandı"])}</select><td><button class="red" onclick="odel(${x.id})">Sil</button></tr>`).join("");
  const RZ=N.filter(x=>x.status=="rezerv");$("tbr").textContent="Rezerv ("+RZ.length+")";
  $("rzt").innerHTML="<tr><th>Nömrə<th>Operator<th>Kateqoriya<th>Qiymət<th>Status</tr>"+(RZ.length?RZ.map(x=>`<tr><td><span class="ph">${fmt(x.phone)}</span><td>${esc(x.operator)}<td>${IC[x.category]||""} ${esc(x.category)}<td><span class="pz">${esc(x.price)} ₼</span><td><select onchange="upd(${x.id},this.value)">${sel(x.status,["aktiv","rezerv","satılıb"])}</select></tr>`).join(""):'<tr><td colspan="5" class="sm">Rezerv olunmuş nömrə yoxdur</tr>')}
+let tt;const toast=m=>{const t=$("toast");t.textContent=m;t.classList.add("on");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("on"),3500)};
 const run=async p=>{const{error}=await p;if(error)alert(error.message);load()};
 const upd=(id,s)=>run(db.from("numbers").update({status:s}).eq("id",id));
 const price=id=>{const v=prompt("Yeni qiymət (₼):");if(v&&!isNaN(v))run(db.from("numbers").update({price:+v}).eq("id",id))};
 const del=id=>confirm("Nömrə silinsin?")&&run(db.from("numbers").delete().eq("id",id));
 const ost=(id,s)=>run(db.from("orders").update({status:s}).eq("id",id));
 const odel=id=>confirm("Sifariş silinsin?")&&run(db.from("orders").delete().eq("id",id));
-$("af").onsubmit=e=>{e.preventDefault();const ph=$("p").value,op=OPS[ph.slice(0,3)];if(!op)return alert("Prefiks tanınmadı ("+ph.slice(0,3)+"). Operator təyin edilə bilmədi.");run(db.from("numbers").insert({phone:ph,operator:op,category:catByPrice($("pr").value),price:+$("pr").value}));e.target.reset()};
+$("af").onsubmit=e=>{e.preventDefault();const ph=$("p").value,op=OPS[ph.slice(0,3)];if(!op)return alert("Prefiks tanınmadı ("+ph.slice(0,3)+"). Operator təyin edilə bilmədi.");if(N.some(x=>x.phone==ph))return toast("Bu nömrə artıq siyahıdadır: "+fmt(ph));run(db.from("numbers").insert({phone:ph,operator:op,category:catByPrice($("pr").value),price:+$("pr").value}));e.target.reset()};
 $("pr").oninput=()=>{$("pr").value=$("pr").value.replace(/\D/g,"").slice(0,6)};
 $("q").oninput=draw;$("qb").onclick=draw;$("q").onkeydown=e=>{if(e.key=="Enter")draw()};
 let S=new Set();
@@ -110,7 +113,11 @@ function rvDraw(){const ex=new Set(N.map(x=>x.phone));
 $("rvok").onclick=()=>{const sel=R.filter(r=>r.on);if(!sel.length)return alert("Heç nə seçilməyib");
  const bad=sel.find(r=>!/^0\d{9}$/.test(r.ph)||!OPL.includes(r.op)||r.pr===""||isNaN(+r.pr));
  if(bad)return alert("Səhv sətir: "+bad.ph+" (nömrə 10 rəqəm olmalı, operator və qiymət doldurulmalıdır)");
- run(db.from("numbers").upsert(sel.map(r=>({phone:r.ph,operator:r.op,category:r.cat,price:+r.pr})),{onConflict:"phone"}));rvClose()};
+ const ex=new Set(N.map(x=>x.phone)),seen=new Set(),add=[],dup=[];
+ sel.forEach(r=>{if(ex.has(r.ph)||seen.has(r.ph))dup.push(r.ph);else{seen.add(r.ph);add.push(r)}});
+ if(dup.length)toast(dup.length+" təkrar nömrə əlavə olunmadı: "+dup.slice(0,3).map(fmt).join(", ")+(dup.length>3?" ...":""));
+ if(add.length)run(db.from("numbers").insert(add.map(r=>({phone:r.ph,operator:r.op,category:r.cat,price:+r.pr}))));
+ rvClose()};
 $("bb").onclick=()=>$("bm").classList.add("on");
 function bulkRead(){const rows=parse($("bulk").value);if(!rows.length)return alert("Nömrə tapılmadı. Hər sətirdə nömrə və qiymət yazın.");
  $("bm").classList.remove("on");R=rows;rvOpen("");rvDraw();$("bulk").value=""}
