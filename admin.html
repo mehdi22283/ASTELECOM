@@ -13,13 +13,15 @@
 <input id="pr" type="number" placeholder="Qiymət ₼" required min="0">
 <button class="gold">Nömrə əlavə et</button>
 </form>
-<div class="row"><input id="q" inputmode="numeric" autocomplete="off" placeholder="🔍 Nömrə axtar"><button id="bb" class="ghost">➕ Toplu əlavə</button><button id="sc" class="gold">📷 Fotodan skan</button><input type="file" id="fl" accept="image/*" hidden><button id="bd" class="red" style="display:none"></button></div>
+<div class="row"><input id="q" inputmode="numeric" autocomplete="off" placeholder="Nömrə axtar"><button id="qb" class="gold">🔍 Axtar</button><button id="bb" class="ghost">➕ Toplu əlavə</button><button id="sc" class="gold">📷 Fotodan skan</button><input type="file" id="fl" accept="image/*" hidden><button id="bd" class="red">🗑 Sil (0)</button><button id="ex" class="ghost">⬇ Export</button></div>
 <div class="scroll"><table id="nt"></table></div></div>
 <div id="to" style="display:none"><div class="scroll"><table id="ot"></table></div></div>
 </div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <div class="modal" id="bm"><div class="box rvbox"><h3>Toplu nömrə əlavə et</h3><p class="sm">Hər sətirdə bir nömrə və qiymət yazın, məsələn: 0554660655 20</p><textarea id="bulk" rows="9" style="width:100%" placeholder="0554660655 20&#10;0558885950 20"></textarea><div class="row"><button class="ghost" onclick="$('bm').classList.remove('on')">Bağla</button><button class="gold" onclick="bulkRead()">Oxu və göstər</button></div></div></div>
 <div class="modal" id="rv"><div class="box rvbox"><h3>Nəticəni yoxlayın</h3><p class="sm" id="rvs"></p><div class="scroll"><table id="rt"></table></div><div class="row"><button class="ghost" onclick="rvClose()">Ləğv et</button><button class="gold" id="rvok" disabled>Təsdiq et</button></div></div></div>
+<div class="modal" id="xm"><div class="box"><h3>Export</h3><label class="sm">Cədvəl</label><select id="xt"><option value="numbers">Nömrələr</option><option value="orders">Sifarişlər</option></select><label class="sm">Format</label><select id="xf"><option value="xlsx">Excel (.xlsx)</option><option value="sql">SQL (.sql)</option><option value="txt">Mətn (.txt)</option></select><div class="row"><button class="ghost" onclick="$('xm').classList.remove('on')">Bağla</button><button class="gold" id="xgo">Yüklə</button></div></div></div>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
 <script src="config.js"></script>
 <script>
@@ -34,7 +36,7 @@ function draw(){const c=s=>N.filter(x=>x.status==s).length;
  $("st").innerHTML=[["Aktiv",c("aktiv")],["Rezerv",c("rezerv")],["Satılıb",c("satılıb")],["Yeni sifariş",O.filter(x=>x.status=="yeni").length]].map(a=>`<div class="stat"><b>${a[1]}</b>${a[0]}</div>`).join("");
  const sel=(v,a)=>a.map(x=>`<option ${x==v?"selected":""}>${x}</option>`).join("");
  pruneS();const V=vis();$("nt").innerHTML="<tr><th><input type=\"checkbox\" aria-label=\"Hamısını seç\" "+(V.length&&V.every(x=>S.has(x.id))?"checked":"")+" onchange=\"pickAll(this.checked)\"><th>Nömrə<th>Operator<th>Kateqoriya<th>Qiymət<th>Status<th></tr>"+V.map(x=>`<tr><td><input type="checkbox" ${S.has(x.id)?"checked":""} onchange="pick(${x.id},this.checked)"><td>${fmt(x.phone)}<td>${esc(x.operator)}<td>${IC[x.category]||""} ${esc(x.category)}<td><a href="#" onclick="price(${x.id});return false">${esc(x.price)} ₼ ✎</a><td><select onchange="upd(${x.id},this.value)">${sel(x.status,["aktiv","rezerv","satılıb"])}</select><td><button class="red" onclick="del(${x.id})">Sil</button></tr>`).join("");
- const n=S.size;$("bd").style.display=n?"":"none";$("bd").textContent="🗑 Seçilmişləri sil ("+n+")";
+ const n=S.size;$("bd").style.opacity=n?1:.6;$("bd").textContent="🗑 Sil ("+n+")";
  $("ot").innerHTML="<tr><th>Tarix<th>Nömrə<th>Ad<th>Əlaqə<th>Qeyd<th>Status<th></tr>"+O.map(x=>`<tr><td>${new Date(x.created_at).toLocaleString("az")}<td>${fmt(x.phone)}<td>${esc(x.name)}<td>${esc(x.contact)}<td>${esc(x.note)}<td><select onchange="ost(${x.id},this.value)">${sel(x.status,["yeni","əlaqə saxlanıldı","tamamlandı"])}</select><td><button class="red" onclick="odel(${x.id})">Sil</button></tr>`).join("")}
 const run=async p=>{const{error}=await p;if(error)alert(error.message);load()};
 const upd=(id,s)=>run(db.from("numbers").update({status:s}).eq("id",id));
@@ -43,13 +45,13 @@ const del=id=>confirm("Nömrə silinsin?")&&run(db.from("numbers").delete().eq("
 const ost=(id,s)=>run(db.from("orders").update({status:s}).eq("id",id));
 const odel=id=>confirm("Sifariş silinsin?")&&run(db.from("orders").delete().eq("id",id));
 $("af").onsubmit=e=>{e.preventDefault();run(db.from("numbers").insert({phone:$("p").value,operator:$("op").value,category:$("ct").value,price:+$("pr").value}));e.target.reset()};
-$("q").oninput=draw;
+$("q").oninput=draw;$("qb").onclick=draw;$("q").onkeydown=e=>{if(e.key=="Enter")draw()};
 let S=new Set();
 const vis=()=>{const q=$("q").value.replace(/\D/g,"");return N.filter(x=>!q||x.phone.includes(q))};
 const pruneS=()=>{const ids=new Set(N.map(x=>x.id));S=new Set([...S].filter(i=>ids.has(i)))};
 const pick=(id,on)=>{on?S.add(id):S.delete(id);draw()};
 const pickAll=on=>{vis().forEach(x=>on?S.add(x.id):S.delete(x.id));draw()};
-$("bd").onclick=()=>{const ids=[...S];if(ids.length&&confirm(ids.length+" nömrə silinsin?")){S.clear();run(db.from("numbers").delete().in("id",ids))}};
+$("bd").onclick=()=>{const ids=[...S];if(!ids.length)return alert("Əvvəlcə silinəcək nömrələrin yanındakı qutuları işarələyin");if(confirm(ids.length+" nömrə silinsin?")){S.clear();run(db.from("numbers").delete().in("id",ids))}};
 const PH=/(0\d{2})[\s\-.–]*(\d{3})[\s\-.–]*(\d{2})[\s\-.–]*(\d{2})/g;
 const OPS={"050":"Azercell","051":"Azercell","010":"Azercell","055":"Bakcell","099":"Bakcell","070":"Nar","077":"Nar"},OPL=["Azercell","Bakcell","Nar"],CATS=["VIP","Qızıl","Gümüş","Bürünc"];
 const guess=p=>{const d=p.slice(3),seq=(s,a)=>{for(let i=1;i<s.length;i++)if(+s[i]-+s[i-1]!=a)return false;return true};
@@ -97,5 +99,17 @@ async function scan(f){rvOpen("Şəkil hazırlanır…");let w;
   R=parse(text);if(!R.length)$("rvs").textContent="Nömrə tapılmadı. Daha aydın şəkillə yenidən cəhd edin.";else rvDraw()}
  catch(err){$("rvs").textContent="Şəkil oxunmadı: "+(err.message||err)+". İnternet bağlantısını yoxlayın."}
  finally{if(w)w.terminate()}}
+$("ex").onclick=()=>$("xm").classList.add("on");
+function dl(name,mime,txt){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:mime+";charset=utf-8"}));a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+$("xgo").onclick=()=>{const t=$("xt").value,f=$("xf").value,rows=t=="numbers"?N:O;
+ if(!rows.length)return alert("Cədvəl boşdur");
+ const cols=[...new Set(rows.flatMap(r=>Object.keys(r)))],nm=t+"_"+new Date().toISOString().slice(0,10);
+ const cell=v=>v==null?"":(typeof v=="object"?JSON.stringify(v):String(v)).replace(/[\t\r\n]+/g," ");
+ if(f=="xlsx"){if(window.XLSX){const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows,{header:cols}),t);XLSX.writeFile(wb,nm+".xlsx")}
+  else{const q=v=>'"'+cell(v).replace(/"/g,'""')+'"';dl(nm+".csv","text/csv","\ufeff"+[cols.map(q).join(","),...rows.map(r=>cols.map(c=>q(r[c])).join(","))].join("\r\n"));alert("Excel kitabxanası yüklənmədi, CSV fayl yükləndi (Excel-də açılır).")}}
+ else if(f=="sql"){const v=x=>x==null?"NULL":typeof x=="number"||typeof x=="boolean"?x:"'"+(typeof x=="object"?JSON.stringify(x):String(x)).replace(/'/g,"''")+"'";
+  dl(nm+".sql","application/sql","-- "+t+" ("+rows.length+" sətir)\n"+rows.map(r=>"INSERT INTO "+t+" ("+cols.join(", ")+") VALUES ("+cols.map(c=>v(r[c])).join(", ")+");").join("\n")+"\n")}
+ else dl(nm+".txt","text/plain",[cols.join("\t"),...rows.map(r=>cols.map(c=>cell(r[c])).join("\t"))].join("\n")+"\n");
+ $("xm").classList.remove("on")};
 check();
 </script></body></html>
