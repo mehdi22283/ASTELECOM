@@ -1,4 +1,5 @@
 <!DOCTYPE html><html lang="az"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin</title><link rel="stylesheet" href="style.css"><style>.rvbox{max-width:860px;max-height:92vh;overflow:auto}.modal{z-index:50}#q{flex:1;min-width:160px}#rt input[type=checkbox]{width:20px;height:20px}#rt input,#rt select{padding:7px 8px}.sm{color:var(--mut);font-size:.9rem}
+.ph,.pz{font-size:1.5em}
 #af>*{min-width:0;width:100%}
 #nt select{padding:6px 6px;font-size:.8rem;max-width:100%}
 @media(max-width:700px){
@@ -7,28 +8,28 @@
 #af select,#af input,#af button{padding:11px 8px;font-size:.92rem}
 #nt{min-width:0;display:block;width:100%}
 #nt tbody{display:block}
-#nt tr{display:grid;grid-template-columns:28px 1fr auto auto;gap:6px 8px;align-items:center;padding:10px 2px;border-bottom:1px solid var(--line)}
+#nt tr{display:grid;grid-template-columns:28px 1fr auto;gap:6px 8px;align-items:center;padding:10px 2px;border-bottom:1px solid var(--line)}
 #nt td,#nt th{border:0;padding:0;min-width:0;font-size:.85rem}
 #nt tr:first-child th:nth-child(n+3){display:none}
 #nt tr:first-child{padding:8px 2px}
 #nt td:nth-child(1){grid-column:1;grid-row:1}
 #nt td:nth-child(2){grid-column:2;grid-row:1;font-size:1rem;font-weight:700;white-space:nowrap}
-#nt td:nth-child(5){grid-column:3;grid-row:1;justify-self:end;white-space:nowrap}
-#nt td:nth-child(7){grid-column:4;grid-row:1;justify-self:end}
+#nt td:nth-child(5){grid-column:3;grid-row:2;justify-self:end;white-space:nowrap}
+#nt td:nth-child(7){grid-column:3;grid-row:1;justify-self:end}
 #nt td:nth-child(3){grid-column:2;grid-row:2;color:var(--mut)}
-#nt td:nth-child(4){grid-column:3;grid-row:2;white-space:nowrap}
-#nt td:nth-child(6){grid-column:4;grid-row:2;justify-self:end}
+#nt td:nth-child(4){grid-column:2;grid-row:3;white-space:nowrap}
+#nt td:nth-child(6){grid-column:3;grid-row:3;justify-self:end}
 #nt button.red{padding:6px 10px;font-size:.8rem}
 #rzt{min-width:0;display:block;width:100%}
 #rzt tbody{display:block}
-#rzt tr{display:grid;grid-template-columns:1fr auto auto;gap:6px 8px;align-items:center;padding:10px 2px;border-bottom:1px solid var(--line)}
+#rzt tr{display:grid;grid-template-columns:1fr auto;gap:6px 8px;align-items:center;padding:10px 2px;border-bottom:1px solid var(--line)}
 #rzt td,#rzt th{border:0;padding:0;min-width:0;font-size:.85rem}
 #rzt tr:first-child{display:none}
-#rzt td:nth-child(1){grid-column:1;grid-row:1;font-size:1rem;font-weight:700;white-space:nowrap}
-#rzt td:nth-child(4){grid-column:2/4;grid-row:1;justify-self:end;white-space:nowrap;font-weight:700}
+#rzt td:nth-child(1){grid-column:1/-1;grid-row:1;font-size:1rem;font-weight:700;white-space:nowrap}
+#rzt td:nth-child(4){grid-column:2;grid-row:2;justify-self:end;white-space:nowrap;font-weight:700}
 #rzt td:nth-child(2){grid-column:1;grid-row:2;color:var(--mut)}
-#rzt td:nth-child(3){grid-column:2;grid-row:2;white-space:nowrap}
-#rzt td:nth-child(5){grid-column:3;grid-row:2;justify-self:end}
+#rzt td:nth-child(3){grid-column:1;grid-row:3;white-space:nowrap}
+#rzt td:nth-child(5){grid-column:2;grid-row:3;justify-self:end}
 #rzt select{padding:6px 6px;font-size:.8rem;max-width:100%}
 #rzt td[colspan]{grid-column:1/-1;grid-row:1}
 }
@@ -69,11 +70,11 @@ async function load(){const[n,o]=await Promise.all([db.from("numbers").select("*
 function draw(){const c=s=>N.filter(x=>x.status==s).length;
  $("st").innerHTML=[["Aktiv",c("aktiv")],["Rezerv",c("rezerv")],["Satılıb",c("satılıb")],["Yeni sifariş",O.filter(x=>x.status=="yeni").length]].map(a=>`<div class="stat"><b>${a[1]}</b>${a[0]}</div>`).join("");
  const sel=(v,a)=>a.map(x=>`<option ${x==v?"selected":""}>${x}</option>`).join("");
- pruneS();const V=vis();$("nt").innerHTML="<tr><th><input type=\"checkbox\" aria-label=\"Hamısını seç\" "+(V.length&&V.every(x=>S.has(x.id))?"checked":"")+" onchange=\"pickAll(this.checked)\"><th>Nömrə<th>Operator<th>Kateqoriya<th>Qiymət<th>Status<th></tr>"+V.map(x=>`<tr><td><input type="checkbox" ${S.has(x.id)?"checked":""} onchange="pick(${x.id},this.checked)"><td>${fmt(x.phone)}<td>${esc(x.operator)}<td>${IC[x.category]||""} ${esc(x.category)}<td><a href="#" onclick="price(${x.id});return false">${esc(x.price)} ₼ ✎</a><td><select onchange="upd(${x.id},this.value)">${sel(x.status,["aktiv","rezerv","satılıb"])}</select><td><button class="red" onclick="del(${x.id})">Sil</button></tr>`).join("");
+ pruneS();const V=vis();$("nt").innerHTML="<tr><th><input type=\"checkbox\" aria-label=\"Hamısını seç\" "+(V.length&&V.every(x=>S.has(x.id))?"checked":"")+" onchange=\"pickAll(this.checked)\"><th>Nömrə<th>Operator<th>Kateqoriya<th>Qiymət<th>Status<th></tr>"+V.map(x=>`<tr><td><input type="checkbox" ${S.has(x.id)?"checked":""} onchange="pick(${x.id},this.checked)"><td><span class="ph">${fmt(x.phone)}</span><td>${esc(x.operator)}<td>${IC[x.category]||""} ${esc(x.category)}<td><a class="pz" href="#" onclick="price(${x.id});return false">${esc(x.price)} ₼ ✎</a><td><select onchange="upd(${x.id},this.value)">${sel(x.status,["aktiv","rezerv","satılıb"])}</select><td><button class="red" onclick="del(${x.id})">Sil</button></tr>`).join("");
  const n=S.size;$("bd").style.opacity=n?1:.6;$("bd").textContent="🗑 Sil ("+n+")";
- $("ot").innerHTML="<tr><th>Tarix<th>Nömrə<th>Ad<th>Əlaqə<th>Qeyd<th>Status<th></tr>"+O.map(x=>`<tr><td>${new Date(x.created_at).toLocaleString("az")}<td>${fmt(x.phone)}<td>${esc(x.name)}<td>${esc(x.contact)}<td>${esc(x.note)}<td><select onchange="ost(${x.id},this.value)">${sel(x.status,["yeni","əlaqə saxlanıldı","tamamlandı"])}</select><td><button class="red" onclick="odel(${x.id})">Sil</button></tr>`).join("");
+ $("ot").innerHTML="<tr><th>Tarix<th>Nömrə<th>Ad<th>Əlaqə<th>Qeyd<th>Status<th></tr>"+O.map(x=>`<tr><td>${new Date(x.created_at).toLocaleString("az")}<td><span class="ph">${fmt(x.phone)}</span><td>${esc(x.name)}<td>${esc(x.contact)}<td>${esc(x.note)}<td><select onchange="ost(${x.id},this.value)">${sel(x.status,["yeni","əlaqə saxlanıldı","tamamlandı"])}</select><td><button class="red" onclick="odel(${x.id})">Sil</button></tr>`).join("");
  const RZ=N.filter(x=>x.status=="rezerv");$("tbr").textContent="Rezerv ("+RZ.length+")";
- $("rzt").innerHTML="<tr><th>Nömrə<th>Operator<th>Kateqoriya<th>Qiymət<th>Status</tr>"+(RZ.length?RZ.map(x=>`<tr><td>${fmt(x.phone)}<td>${esc(x.operator)}<td>${IC[x.category]||""} ${esc(x.category)}<td>${esc(x.price)} ₼<td><select onchange="upd(${x.id},this.value)">${sel(x.status,["aktiv","rezerv","satılıb"])}</select></tr>`).join(""):'<tr><td colspan="5" class="sm">Rezerv olunmuş nömrə yoxdur</tr>')}
+ $("rzt").innerHTML="<tr><th>Nömrə<th>Operator<th>Kateqoriya<th>Qiymət<th>Status</tr>"+(RZ.length?RZ.map(x=>`<tr><td><span class="ph">${fmt(x.phone)}</span><td>${esc(x.operator)}<td>${IC[x.category]||""} ${esc(x.category)}<td><span class="pz">${esc(x.price)} ₼</span><td><select onchange="upd(${x.id},this.value)">${sel(x.status,["aktiv","rezerv","satılıb"])}</select></tr>`).join(""):'<tr><td colspan="5" class="sm">Rezerv olunmuş nömrə yoxdur</tr>')}
 const run=async p=>{const{error}=await p;if(error)alert(error.message);load()};
 const upd=(id,s)=>run(db.from("numbers").update({status:s}).eq("id",id));
 const price=id=>{const v=prompt("Yeni qiymət (₼):");if(v&&!isNaN(v))run(db.from("numbers").update({price:+v}).eq("id",id))};
