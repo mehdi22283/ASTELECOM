@@ -26,7 +26,7 @@
 <form id="lg" class="box" style="margin:60px auto"><h3>Giriş</h3><input id="em" type="email" placeholder="Email" required><input id="pw" type="password" placeholder="Şifrə" required><button>Daxil ol</button></form>
 <div id="pn" style="display:none">
 <div class="stats" id="st"></div>
-<div class="row"><button id="tbn" onclick="tab('n')">Nömrələr</button><button id="tbo" class="ghost" onclick="tab('o')">Sifarişlər</button></div>
+<div class="row"><button id="tbn" onclick="tab('n')">Nömrələr</button><button id="tbo" class="ghost" onclick="tab('o')">Sifarişlər</button><button id="tbr" class="ghost" onclick="tab('r')">Rezerv</button></div>
 <div id="tn">
 <form id="af" class="filters">
 <input id="p" type="tel" placeholder="Nömrə: 0507777777" required pattern="\d{10}" maxlength="10" inputmode="tel" autocomplete="off" oninput="this.value=this.value.replace(/\D/g,'').slice(0,10)">
@@ -37,6 +37,7 @@
 <div class="contact" style="margin:0 0 16px"><h2>Sistemdə axtar</h2><div class="acts" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-top:12px"><a class="cbtn" style="background:#6d2fd1" target="_blank" rel="noopener" href="https://azercellim.com">Azərcelldə axtar</a><a class="cbtn" style="background:#00a651" target="_blank" rel="noopener" href="https://bakcell.com/number-sale">Bakcelldə axtar</a><a class="cbtn" style="background:#e4002b" target="_blank" rel="noopener" href="https://www.narsim.az/">Narda axtar</a></div></div>
 <div class="scroll"><table id="nt"></table></div></div>
 <div id="to" style="display:none"><div class="scroll"><table id="ot"></table></div></div>
+<div id="trz" style="display:none"><div class="scroll"><table id="rzt"></table></div></div>
 </div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <div class="modal" id="bm"><div class="box rvbox"><h3>Toplu nömrə əlavə et</h3><p class="sm">Hər sətirdə bir nömrə və qiymət yazın, məsələn: 0554660655 20</p><textarea id="bulk" rows="9" style="width:100%" placeholder="0554660655 20&#10;0558885950 20"></textarea><div class="row"><button class="ghost" onclick="$('bm').classList.remove('on')">Bağla</button><button class="gold" onclick="bulkRead()">Oxu və göstər</button></div></div></div>
@@ -51,14 +52,16 @@ async function check(){const{data:{session}}=await db.auth.getSession();
  $("lg").style.display=session?"none":"";$("pn").style.display=$("out").style.display=session?"":"none";if(session)load()}
 $("lg").onsubmit=async e=>{e.preventDefault();const{error}=await db.auth.signInWithPassword({email:$("em").value,password:$("pw").value});error?alert("Email və ya şifrə səhvdir"):check()};
 $("out").onclick=async()=>{await db.auth.signOut();check()};
-function tab(t){$("tbn").classList.toggle("ghost",t!="n");$("tbo").classList.toggle("ghost",t!="o");$("tn").style.display=t=="n"?"":"none";$("to").style.display=t=="o"?"":"none"}
+function tab(t){[["n","tbn","tn"],["o","tbo","to"],["r","tbr","trz"]].forEach(a=>{$(a[1]).classList.toggle("ghost",t!=a[0]);$(a[2]).style.display=t==a[0]?"":"none"})}
 async function load(){const[n,o]=await Promise.all([db.from("numbers").select("*").order("id",{ascending:false}),db.from("orders").select("*").order("id",{ascending:false})]);N=n.data||[];O=o.data||[];draw()}
 function draw(){const c=s=>N.filter(x=>x.status==s).length;
  $("st").innerHTML=[["Aktiv",c("aktiv")],["Rezerv",c("rezerv")],["Satılıb",c("satılıb")],["Yeni sifariş",O.filter(x=>x.status=="yeni").length]].map(a=>`<div class="stat"><b>${a[1]}</b>${a[0]}</div>`).join("");
  const sel=(v,a)=>a.map(x=>`<option ${x==v?"selected":""}>${x}</option>`).join("");
  pruneS();const V=vis();$("nt").innerHTML="<tr><th><input type=\"checkbox\" aria-label=\"Hamısını seç\" "+(V.length&&V.every(x=>S.has(x.id))?"checked":"")+" onchange=\"pickAll(this.checked)\"><th>Nömrə<th>Operator<th>Kateqoriya<th>Qiymət<th>Status<th></tr>"+V.map(x=>`<tr><td><input type="checkbox" ${S.has(x.id)?"checked":""} onchange="pick(${x.id},this.checked)"><td>${fmt(x.phone)}<td>${esc(x.operator)}<td>${IC[x.category]||""} ${esc(x.category)}<td><a href="#" onclick="price(${x.id});return false">${esc(x.price)} ₼ ✎</a><td><select onchange="upd(${x.id},this.value)">${sel(x.status,["aktiv","rezerv","satılıb"])}</select><td><button class="red" onclick="del(${x.id})">Sil</button></tr>`).join("");
  const n=S.size;$("bd").style.opacity=n?1:.6;$("bd").textContent="🗑 Sil ("+n+")";
- $("ot").innerHTML="<tr><th>Tarix<th>Nömrə<th>Ad<th>Əlaqə<th>Qeyd<th>Status<th></tr>"+O.map(x=>`<tr><td>${new Date(x.created_at).toLocaleString("az")}<td>${fmt(x.phone)}<td>${esc(x.name)}<td>${esc(x.contact)}<td>${esc(x.note)}<td><select onchange="ost(${x.id},this.value)">${sel(x.status,["yeni","əlaqə saxlanıldı","tamamlandı"])}</select><td><button class="red" onclick="odel(${x.id})">Sil</button></tr>`).join("")}
+ $("ot").innerHTML="<tr><th>Tarix<th>Nömrə<th>Ad<th>Əlaqə<th>Qeyd<th>Status<th></tr>"+O.map(x=>`<tr><td>${new Date(x.created_at).toLocaleString("az")}<td>${fmt(x.phone)}<td>${esc(x.name)}<td>${esc(x.contact)}<td>${esc(x.note)}<td><select onchange="ost(${x.id},this.value)">${sel(x.status,["yeni","əlaqə saxlanıldı","tamamlandı"])}</select><td><button class="red" onclick="odel(${x.id})">Sil</button></tr>`).join("");
+ const RZ=N.filter(x=>x.status=="rezerv");$("tbr").textContent="Rezerv ("+RZ.length+")";
+ $("rzt").innerHTML="<tr><th>Nömrə<th>Operator<th>Kateqoriya<th>Qiymət<th>Status</tr>"+(RZ.length?RZ.map(x=>`<tr><td>${fmt(x.phone)}<td>${esc(x.operator)}<td>${IC[x.category]||""} ${esc(x.category)}<td>${esc(x.price)} ₼<td><select onchange="upd(${x.id},this.value)">${sel(x.status,["aktiv","rezerv","satılıb"])}</select></tr>`).join(""):'<tr><td colspan="5" class="sm">Rezerv olunmuş nömrə yoxdur</tr>')}
 const run=async p=>{const{error}=await p;if(error)alert(error.message);load()};
 const upd=(id,s)=>run(db.from("numbers").update({status:s}).eq("id",id));
 const price=id=>{const v=prompt("Yeni qiymət (₼):");if(v&&!isNaN(v))run(db.from("numbers").update({price:+v}).eq("id",id))};
