@@ -160,3 +160,5 @@ button:active,.cbtn:active{transform:scale(.94);filter:brightness(1.15)}
 .hc button{background:#1d1c36;border:1px solid var(--line);color:var(--txt);font-weight:500;font-size:.82rem;padding:7px 12px;border-radius:99px;text-align:left;max-width:100%}
 
 .contact h2{margin-bottom:4px}
+
+.price{font-size:1.3rem}

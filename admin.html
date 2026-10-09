@@ -29,7 +29,7 @@
 <div class="row"><button id="tbn" onclick="tab('n')">Nömrələr</button><button id="tbo" class="ghost" onclick="tab('o')">Sifarişlər</button></div>
 <div id="tn">
 <form id="af" class="filters">
-<input id="p" placeholder="Nömrə: 0507777777" required pattern="\d{10}" inputmode="numeric">
+<input id="p" placeholder="Nömrə: 0507777777" required pattern="\d{10}" maxlength="10" inputmode="numeric" autocomplete="off" oninput="this.value=this.value.replace(/\D/g,'').slice(0,10)">
 <select id="op"><option>Azercell</option><option>Bakcell</option><option>Nar</option></select>
 <select id="ct"><option value="VIP">👑 VIP</option><option value="Qızıl">🥇 Qızıl</option><option value="Gümüş">🥈 Gümüş</option><option value="Bürünc">🥉 Bürünc</option></select>
 <input id="pr" type="number" placeholder="Qiymət ₼" required min="0">
